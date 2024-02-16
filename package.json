@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest",
+    "test:staged": "vitest",
     "coverage": "vitest run --coverage"
   },
   "keywords": [],
