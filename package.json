@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest",
-    "test:staged": "vitest run",
-    "coverage": "vitest run --coverage"
+    "test:staged": "vitest run --passWithNoTests",
+    "coverage": "vitest run --passWithNoTests --coverage"
   },
   "keywords": [],
   "author": "",
