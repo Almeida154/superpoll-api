@@ -4,6 +4,15 @@
     "module": "CommonJS",
     "target": "ES2021",
     "esModuleInterop": true,
-    "allowJs": true
+    "allowJs": true,
+    "baseUrl": "src",
+    "rootDirs": [
+      "src"
+    ],
+    "paths": {
+      "@/*": [
+        "*"
+      ]
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest'
-import { SignUpController } from './sign-up'
+import { SignUpController } from '@/presentation/controllers/sign-up'
+import { NoProvidedParamError } from '@/presentation/errors/no-provided-param'
 
 describe('SignUp Controller', () => {
   test('Should return 400 if no name is provided', () => {
@@ -16,7 +17,7 @@ describe('SignUp Controller', () => {
     const httpResponse = sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new Error('No name was provided'))
+    expect(httpResponse.body).toEqual(new NoProvidedParamError('name'))
   })
 
   test('Should return 400 if no e-mail is provided', () => {
@@ -33,6 +34,6 @@ describe('SignUp Controller', () => {
     const httpResponse = sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new Error('No e-mail was provided'))
+    expect(httpResponse.body).toEqual(new NoProvidedParamError('e-mail'))
   })
 })
