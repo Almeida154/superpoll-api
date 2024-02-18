@@ -4,10 +4,11 @@ import { NoProvidedParamError } from '@/presentation/errors/no-provided-param'
 
 export class SignUpController {
   handle(httpRequest: HttpRequest): HttpResponse {
-    if (!httpRequest.body.name)
-      return badRequest(new NoProvidedParamError('name'))
+    const requiredFields = ['name', 'email']
 
-    if (!httpRequest.body.email)
-      return badRequest(new NoProvidedParamError('e-mail'))
+    for (const field of requiredFields) {
+      if (!httpRequest.body[field])
+        return badRequest(new NoProvidedParamError(field))
+    }
   }
 }
