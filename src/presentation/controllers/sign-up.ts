@@ -1,7 +1,8 @@
 import { HttpRequest, HttpResponse } from '@/presentation/protocols/http'
 import { Controller } from '@/presentation/protocols/controller'
-import { badRequest } from '@/presentation/helpers/http'
 import { NoProvidedParamError } from '@/presentation/errors/no-provided-param'
+
+import { badRequest } from '@/presentation/helpers/http'
 
 export class SignUpController implements Controller {
   handle(httpRequest: HttpRequest): HttpResponse {
