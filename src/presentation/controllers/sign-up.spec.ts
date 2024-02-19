@@ -1,4 +1,4 @@
-import { describe, expect, test, vitest } from 'vitest'
+import { describe, expect, it, vitest } from 'vitest'
 import { SignUpController } from '@/presentation/controllers/sign-up'
 
 import { NoProvidedParamError } from '@/presentation/errors/no-provided-param'
@@ -25,7 +25,7 @@ const makeSUT = (): ISut => {
 }
 
 describe('SignUp Controller', () => {
-  test('Should return 400 if no name was provided', () => {
+  it('Should returns 400 if no name was provided', () => {
     const { sut } = makeSUT()
 
     const httpRequest = {
@@ -42,7 +42,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new NoProvidedParamError('name'))
   })
 
-  test('Should return 400 if no email was provided', () => {
+  it('Should returns 400 if no email was provided', () => {
     const { sut } = makeSUT()
 
     const httpRequest = {
@@ -59,7 +59,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new NoProvidedParamError('email'))
   })
 
-  test('Should return 400 if no password was provided', () => {
+  it('Should returns 400 if no password was provided', () => {
     const { sut } = makeSUT()
 
     const httpRequest = {
@@ -76,7 +76,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new NoProvidedParamError('password'))
   })
 
-  test('Should return 400 if no password confirmation was provided', () => {
+  it('Should returns 400 if no password confirmation was provided', () => {
     const { sut } = makeSUT()
 
     const httpRequest = {
@@ -95,7 +95,7 @@ describe('SignUp Controller', () => {
     )
   })
 
-  test('Should return 400 if an invalid email was provided', () => {
+  it('Should returns 400 if an invalid email was provided', () => {
     const { sut, emailValidatorStub } = makeSUT()
 
     vitest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false)
@@ -113,5 +113,23 @@ describe('SignUp Controller', () => {
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('email'))
+  })
+
+  it('Should calls EmailValidator with correct email', () => {
+    const { sut, emailValidatorStub } = makeSUT()
+
+    const isValidSpy = vitest.spyOn(emailValidatorStub, 'isValid')
+
+    const httpRequest = {
+      body: {
+        name: 'John Doe',
+        email: 'john@doe.com',
+        password: 'any_password',
+        passwordConfirmation: 'any_password',
+      },
+    }
+
+    sut.handle(httpRequest)
+    expect(isValidSpy).toHaveBeenCalledWith('john@doe.com')
   })
 })
