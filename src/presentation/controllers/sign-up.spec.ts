@@ -10,10 +10,8 @@ import {
 
 import { EmailValidator } from '@/presentation/protocols'
 
-interface ISut {
-  emailValidatorStub: EmailValidator
-  sut: SignUpController
-}
+import { AccountModel } from '@/domain/models'
+import { AddAccount } from '@/domain/usecases'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -25,11 +23,33 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub()
 }
 
+const makeAddAccount = (): AddAccount => {
+  class AddAccountStub implements AddAccount {
+    execute(): AccountModel {
+      return {
+        id: 'valid_id',
+        name: 'John Doe',
+        email: 'john@doe.com',
+        password: 'valid_password',
+      }
+    }
+  }
+
+  return new AddAccountStub()
+}
+
+interface ISut {
+  emailValidatorStub: EmailValidator
+  addAccountStub: AddAccount
+  sut: SignUpController
+}
+
 const makeSUT = (): ISut => {
   const emailValidatorStub = makeEmailValidator()
-  const sut = new SignUpController(emailValidatorStub)
+  const addAccountStub = makeAddAccount()
+  const sut = new SignUpController(emailValidatorStub, addAccountStub)
 
-  return { emailValidatorStub, sut }
+  return { emailValidatorStub, addAccountStub, sut }
 }
 
 describe('SignUp Controller', () => {
@@ -161,6 +181,29 @@ describe('SignUp Controller', () => {
     sut.handle(httpRequest)
 
     expect(isValidSpy).toHaveBeenCalledWith('john@doe.com')
+  })
+
+  it('Should calls AddAccount with correct values', () => {
+    const { sut, addAccountStub } = makeSUT()
+
+    const addSpy = vitest.spyOn(addAccountStub, 'execute')
+
+    const httpRequest = {
+      body: {
+        name: 'John Doe',
+        email: 'john@doe.com',
+        password: 'any_password',
+        passwordConfirmation: 'any_password',
+      },
+    }
+
+    sut.handle(httpRequest)
+
+    expect(addSpy).toHaveBeenCalledWith({
+      name: 'John Doe',
+      email: 'john@doe.com',
+      password: 'any_password',
+    })
   })
 
   it('Should returns 500 if EmailValidator throws', () => {
