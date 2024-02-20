@@ -8,7 +8,11 @@ import {
 
 import { NoProvidedParamError, InvalidParamError } from '@/presentation/errors'
 
-import { badRequest, internalServerError } from '@/presentation/helpers/http'
+import {
+  badRequest,
+  internalServerError,
+  ok,
+} from '@/presentation/helpers/http'
 
 export class SignUpController implements Controller {
   private readonly emailValidator: EmailValidator
@@ -45,10 +49,7 @@ export class SignUpController implements Controller {
 
       const account = this.addAccount.execute({ email, password, name })
 
-      return {
-        statusCode: 200,
-        body: account,
-      }
+      return ok(account)
     } catch (error) {
       return internalServerError()
     }
