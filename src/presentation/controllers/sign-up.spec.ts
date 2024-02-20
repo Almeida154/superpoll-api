@@ -8,7 +8,7 @@ import {
   InvalidParamError,
 } from '@/presentation/errors'
 
-import { EmailValidator } from '@/presentation/protocols/email-validator'
+import { EmailValidator } from '@/presentation/protocols'
 
 interface ISut {
   emailValidatorStub: EmailValidator

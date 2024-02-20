@@ -1,6 +1,9 @@
-import { HttpRequest, HttpResponse } from '@/presentation/protocols/http'
-import { Controller } from '@/presentation/protocols/controller'
-import { EmailValidator } from '@/presentation/protocols/email-validator'
+import {
+  HttpRequest,
+  HttpResponse,
+  Controller,
+  EmailValidator,
+} from '@/presentation/protocols'
 
 import { NoProvidedParamError, InvalidParamError } from '@/presentation/errors'
 
