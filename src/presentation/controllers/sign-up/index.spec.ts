@@ -8,10 +8,7 @@ import {
   InvalidParamError,
 } from '@/presentation/errors'
 
-import { EmailValidator } from '@/presentation/protocols'
-
-import { AccountModel } from '@/domain/models'
-import { AddAccount } from '@/domain/usecases'
+import { EmailValidator, AccountModel, AddAccount } from './protocols'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {

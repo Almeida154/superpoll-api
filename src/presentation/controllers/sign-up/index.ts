@@ -2,14 +2,13 @@ import {
   HttpRequest,
   HttpResponse,
   Controller,
+  AddAccount,
   EmailValidator,
-} from '@/presentation/protocols'
+} from './protocols'
 
 import { NoProvidedParamError, InvalidParamError } from '@/presentation/errors'
 
 import { badRequest, internalServerError } from '@/presentation/helpers/http'
-
-import { AddAccount } from '@/domain/usecases'
 
 export class SignUpController implements Controller {
   private readonly emailValidator: EmailValidator
