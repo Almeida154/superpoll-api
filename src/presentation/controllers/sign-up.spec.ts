@@ -1,8 +1,12 @@
 import { describe, expect, it, vitest } from 'vitest'
+
 import { SignUpController } from '@/presentation/controllers/sign-up'
 
-import { NoProvidedParamError } from '@/presentation/errors/no-provided-param'
-import { InvalidParamError } from '@/presentation/errors/invalid-param'
+import {
+  NoProvidedParamError,
+  InternalServerError,
+  InvalidParamError,
+} from '@/presentation/errors'
 
 import { EmailValidator } from '@/presentation/protocols/email-validator'
 
@@ -130,6 +134,32 @@ describe('SignUp Controller', () => {
     }
 
     sut.handle(httpRequest)
+
     expect(isValidSpy).toHaveBeenCalledWith('john@doe.com')
+  })
+
+  it('Should returns 500 if EmailValidator throws', () => {
+    class EmailValidatorStub implements EmailValidator {
+      isValid(): boolean {
+        throw new Error()
+      }
+    }
+
+    const emailValidatorStub = new EmailValidatorStub()
+    const sut = new SignUpController(emailValidatorStub)
+
+    const httpRequest = {
+      body: {
+        name: 'John Doe',
+        email: 'jonh@doe.com',
+        password: 'any_password',
+        passwordConfirmation: 'any_password',
+      },
+    }
+
+    const httpResponse = sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new InternalServerError())
   })
 })
