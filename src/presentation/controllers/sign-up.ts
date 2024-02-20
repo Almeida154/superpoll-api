@@ -9,11 +9,15 @@ import { NoProvidedParamError, InvalidParamError } from '@/presentation/errors'
 
 import { badRequest, internalServerError } from '@/presentation/helpers/http'
 
+import { AddAccount } from '@/domain/usecases'
+
 export class SignUpController implements Controller {
   private readonly emailValidator: EmailValidator
+  private readonly addAccount: AddAccount
 
-  constructor(emailValidator: EmailValidator) {
+  constructor(emailValidator: EmailValidator, addAccount: AddAccount) {
     this.emailValidator = emailValidator
+    this.addAccount = addAccount
   }
 
   handle(httpRequest: HttpRequest): HttpResponse {
@@ -30,7 +34,7 @@ export class SignUpController implements Controller {
           return badRequest(new NoProvidedParamError(field))
       }
 
-      const { password, passwordConfirmation, email } = httpRequest.body
+      const { password, passwordConfirmation, email, name } = httpRequest.body
 
       if (password !== passwordConfirmation) {
         return badRequest(new InvalidParamError('passwordConfirmation'))
@@ -39,6 +43,8 @@ export class SignUpController implements Controller {
       const isEmailValid = this.emailValidator.isValid(email)
 
       if (!isEmailValid) return badRequest(new InvalidParamError('email'))
+
+      this.addAccount.execute({ email, password, name })
     } catch (error) {
       return internalServerError()
     }
