@@ -5,7 +5,9 @@ export default defineConfig({
   test: {
     coverage: {
       provider: 'istanbul',
+      include: ['**/*.ts'],
     },
+    reporters: ['default', 'html'],
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
