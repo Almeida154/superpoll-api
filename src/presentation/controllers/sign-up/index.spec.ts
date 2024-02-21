@@ -1,6 +1,6 @@
 import { describe, expect, it, vitest } from 'vitest'
 
-import { SignUpController } from '@/presentation/controllers/sign-up'
+import { SignUpController } from '.'
 
 import {
   NoProvidedParamError,
