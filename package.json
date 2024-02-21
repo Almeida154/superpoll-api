@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest --passWithNoTests",
+    "test:ui": "npm test -- --reporter=dot --ui",
     "test:unit": "npm test -- --reporter=dot -c vitest-unit.config.js",
     "test:integration": "npm test -- --reporter=dot -c vitest-integration.config.js",
     "test:staged": "npm test -- --run",
-    "test:ci": "npm test -- --run --coverage --ui"
+    "test:ci": "npm test -- --run --coverage"
   },
   "keywords": [],
   "author": "David Almeida",
