@@ -1,9 +1,9 @@
 import {
-  HttpRequest,
-  HttpResponse,
-  Controller,
-  AddAccountUseCase,
-  EmailValidator,
+  IHttpRequest,
+  IHttpResponse,
+  IController,
+  IAddAccountUseCase,
+  IEmailValidator,
 } from './protocols'
 
 import { NoProvidedParamError, InvalidParamError } from '@/presentation/errors'
@@ -14,19 +14,19 @@ import {
   ok,
 } from '@/presentation/helpers/http'
 
-export class SignUpController implements Controller {
-  private readonly emailValidator: EmailValidator
-  private readonly addAccountUseCase: AddAccountUseCase
+export class SignUpController implements IController {
+  private readonly emailValidator: IEmailValidator
+  private readonly addAccountUseCase: IAddAccountUseCase
 
   constructor(
-    emailValidator: EmailValidator,
-    addAccountUseCase: AddAccountUseCase,
+    emailValidator: IEmailValidator,
+    addAccountUseCase: IAddAccountUseCase,
   ) {
     this.emailValidator = emailValidator
     this.addAccountUseCase = addAccountUseCase
   }
 
-  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
+  async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
       const requiredFields = [
         'name',

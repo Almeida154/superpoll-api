@@ -1,1 +1,1 @@
-export * from './db-add-account'
+export * from './add-account'

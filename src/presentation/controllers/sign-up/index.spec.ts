@@ -8,10 +8,10 @@ import {
   InvalidParamError,
 } from '@/presentation/errors'
 
-import { EmailValidator, AccountModel, AddAccountUseCase } from './protocols'
+import { IEmailValidator, AccountModel, IAddAccountUseCase } from './protocols'
 
-const makeEmailValidator = (): EmailValidator => {
-  class EmailValidatorStub implements EmailValidator {
+const makeEmailValidator = (): IEmailValidator => {
+  class EmailValidatorStub implements IEmailValidator {
     isValid(): boolean {
       return true
     }
@@ -20,8 +20,8 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub()
 }
 
-const makeAddAccount = (): AddAccountUseCase => {
-  class AddAccountStub implements AddAccountUseCase {
+const makeAddAccount = (): IAddAccountUseCase => {
+  class AddAccountStub implements IAddAccountUseCase {
     async execute(): Promise<AccountModel> {
       return new Promise((resolve) =>
         resolve({
@@ -38,8 +38,8 @@ const makeAddAccount = (): AddAccountUseCase => {
 }
 
 interface ISut {
-  emailValidatorStub: EmailValidator
-  addAccountStub: AddAccountUseCase
+  emailValidatorStub: IEmailValidator
+  addAccountStub: IAddAccountUseCase
   sut: SignUpController
 }
 

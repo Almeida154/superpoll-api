@@ -1,11 +1,11 @@
 import { AccountModel } from '@/domain/models'
 
-export interface AddAccountModel {
+export interface IAddAccountModel {
   name: string
   email: string
   password: string
 }
 
-export interface AddAccountUseCase {
-  execute(account: AddAccountModel): Promise<AccountModel>
+export interface IAddAccountUseCase {
+  execute(account: IAddAccountModel): Promise<AccountModel>
 }

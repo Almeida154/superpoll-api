@@ -1,17 +1,17 @@
-import { HttpResponse } from '@/presentation/protocols'
+import { IHttpResponse } from '@/presentation/protocols'
 import { InternalServerError } from '@/presentation/errors'
 
-export const badRequest = (error: Error): HttpResponse => ({
+export const badRequest = (error: Error): IHttpResponse => ({
   statusCode: 400,
   body: error,
 })
 
-export const internalServerError = (): HttpResponse => ({
+export const internalServerError = (): IHttpResponse => ({
   statusCode: 500,
   body: new InternalServerError(),
 })
 
-export const ok = (data: unknown): HttpResponse => ({
+export const ok = (data: unknown): IHttpResponse => ({
   statusCode: 200,
   body: data,
 })
