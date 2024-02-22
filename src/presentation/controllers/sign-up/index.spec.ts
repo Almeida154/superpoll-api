@@ -20,7 +20,7 @@ const makeEmailValidator = (): IEmailValidator => {
   return new EmailValidatorStub()
 }
 
-const makeAddAccount = (): IAddAccountUseCase => {
+const makeAddAccountUseCase = (): IAddAccountUseCase => {
   class AddAccountStub implements IAddAccountUseCase {
     async execute(): Promise<AccountModel> {
       return new Promise((resolve) =>
@@ -39,16 +39,16 @@ const makeAddAccount = (): IAddAccountUseCase => {
 
 interface ISut {
   emailValidatorStub: IEmailValidator
-  addAccountStub: IAddAccountUseCase
+  addAccountUseCaseStub: IAddAccountUseCase
   sut: SignUpController
 }
 
 const makeSUT = (): ISut => {
   const emailValidatorStub = makeEmailValidator()
-  const addAccountStub = makeAddAccount()
-  const sut = new SignUpController(emailValidatorStub, addAccountStub)
+  const addAccountUseCaseStub = makeAddAccountUseCase()
+  const sut = new SignUpController(emailValidatorStub, addAccountUseCaseStub)
 
-  return { emailValidatorStub, addAccountStub, sut }
+  return { emailValidatorStub, addAccountUseCaseStub, sut }
 }
 
 describe('SignUp Controller', () => {
@@ -183,9 +183,9 @@ describe('SignUp Controller', () => {
   })
 
   it('Should calls AddAccountUseCase with correct values', async () => {
-    const { sut, addAccountStub } = makeSUT()
+    const { sut, addAccountUseCaseStub } = makeSUT()
 
-    const addSpy = vitest.spyOn(addAccountStub, 'execute')
+    const addSpy = vitest.spyOn(addAccountUseCaseStub, 'execute')
 
     const httpRequest = {
       body: {
@@ -228,11 +228,13 @@ describe('SignUp Controller', () => {
   })
 
   it('Should returns 500 if AddAccountUseCase throws', async () => {
-    const { sut, addAccountStub } = makeSUT()
+    const { sut, addAccountUseCaseStub } = makeSUT()
 
-    vitest.spyOn(addAccountStub, 'execute').mockImplementationOnce(async () => {
-      return new Promise((resolve, reject) => reject(new Error()))
-    })
+    vitest
+      .spyOn(addAccountUseCaseStub, 'execute')
+      .mockImplementationOnce(async () => {
+        return new Promise((resolve, reject) => reject(new Error()))
+      })
 
     const httpRequest = {
       body: {
