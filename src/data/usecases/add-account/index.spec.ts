@@ -123,4 +123,23 @@ describe('IAddAccountUseCase', () => {
     const accountPromise = sut.execute(addAccountData)
     await expect(accountPromise).rejects.toThrow()
   })
+
+  it('Should returns an account on success', async () => {
+    const { sut } = makeSUT()
+
+    const addAccountData: IAddAccountModel = {
+      email: 'valid@email.com',
+      name: 'valid_name',
+      password: 'valid_password',
+    }
+
+    const account = await sut.execute(addAccountData)
+
+    expect(account).toEqual({
+      id: 'valid_id',
+      name: 'valid_name',
+      email: 'valid_email',
+      password: 'hashed_password',
+    })
+  })
 })
