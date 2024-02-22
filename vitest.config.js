@@ -7,7 +7,6 @@ export default defineConfig({
       provider: 'istanbul',
       include: ['**/*.ts'],
     },
-    reporters: ['default', 'html'],
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
