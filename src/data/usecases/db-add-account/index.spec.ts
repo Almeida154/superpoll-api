@@ -5,19 +5,23 @@ import { Encrypter } from '@/data/protocols/encrypter'
 
 import { DbAddAccountUseCase } from '.'
 
-interface ISut {
-  sut: DbAddAccountUseCase
-  encrypterStub: Encrypter
-}
-
-const makeSUT = (): ISut => {
+const makeEncrypter = (): Encrypter => {
   class EncrypterStub implements Encrypter {
     async encrypt(): Promise<string> {
       return new Promise((resolve) => resolve('hashed_password'))
     }
   }
 
-  const encrypterStub = new EncrypterStub()
+  return new EncrypterStub()
+}
+
+interface ISut {
+  sut: DbAddAccountUseCase
+  encrypterStub: Encrypter
+}
+
+const makeSUT = (): ISut => {
+  const encrypterStub = makeEncrypter()
   const sut = new DbAddAccountUseCase(encrypterStub)
 
   return {
