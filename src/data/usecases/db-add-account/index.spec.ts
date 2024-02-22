@@ -46,9 +46,14 @@ describe('DbAddAccountUseCase', () => {
     expect(encryptSpy).toHaveBeenLastCalledWith(addAccountData.password)
   })
 
-  it('Should returns', async () => {
+  it('Should throws if Encrypter throws', async () => {
     const { sut, encrypterStub } = makeSUT()
-    const encryptSpy = vitest.spyOn(encrypterStub, 'encrypt')
+
+    vitest
+      .spyOn(encrypterStub, 'encrypt')
+      .mockReturnValueOnce(
+        new Promise((resolve, reject) => reject(new Error())),
+      )
 
     const addAccountData: AddAccountModel = {
       email: 'valid@email.com',
@@ -56,8 +61,7 @@ describe('DbAddAccountUseCase', () => {
       password: 'valid_password',
     }
 
-    await sut.execute(addAccountData)
-
-    expect(encryptSpy).toHaveBeenLastCalledWith(addAccountData.password)
+    const accountPromise = sut.execute(addAccountData)
+    await expect(accountPromise).rejects.toThrow()
   })
 })
