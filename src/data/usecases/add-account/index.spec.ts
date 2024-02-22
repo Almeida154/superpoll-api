@@ -52,7 +52,7 @@ const makeSUT = (): ISut => {
 }
 
 describe('IAddAccountUseCase', () => {
-  it('Should calls IEncrypter with correct password', async () => {
+  it('Should calls Encrypter with correct password', async () => {
     const { sut, encrypterStub } = makeSUT()
     const encryptSpy = vitest.spyOn(encrypterStub, 'encrypt')
 
@@ -67,7 +67,7 @@ describe('IAddAccountUseCase', () => {
     expect(encryptSpy).toHaveBeenCalledWith(addAccountData.password)
   })
 
-  it('Should throws if IEncrypter throws', async () => {
+  it('Should throws if Encrypter throws', async () => {
     const { sut, encrypterStub } = makeSUT()
 
     vitest
@@ -103,5 +103,24 @@ describe('IAddAccountUseCase', () => {
       ...addAccountData,
       password: 'hashed_password',
     })
+  })
+
+  it('Should throws if AddAccountRepository throws', async () => {
+    const { sut, addAccountRepositoryStub } = makeSUT()
+
+    vitest
+      .spyOn(addAccountRepositoryStub, 'dispatch')
+      .mockReturnValueOnce(
+        new Promise((resolve, reject) => reject(new Error())),
+      )
+
+    const addAccountData: IAddAccountModel = {
+      email: 'valid@email.com',
+      name: 'valid_name',
+      password: 'valid_password',
+    }
+
+    const accountPromise = sut.execute(addAccountData)
+    await expect(accountPromise).rejects.toThrow()
   })
 })
