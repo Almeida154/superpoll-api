@@ -8,7 +8,7 @@ import {
   InvalidParamError,
 } from '@/presentation/errors'
 
-import { EmailValidator, AccountModel, AddAccount } from './protocols'
+import { EmailValidator, AccountModel, AddAccountUseCase } from './protocols'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -20,8 +20,8 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub()
 }
 
-const makeAddAccount = (): AddAccount => {
-  class AddAccountStub implements AddAccount {
+const makeAddAccount = (): AddAccountUseCase => {
+  class AddAccountStub implements AddAccountUseCase {
     async execute(): Promise<AccountModel> {
       return new Promise((resolve) =>
         resolve({
@@ -39,7 +39,7 @@ const makeAddAccount = (): AddAccount => {
 
 interface ISut {
   emailValidatorStub: EmailValidator
-  addAccountStub: AddAccount
+  addAccountStub: AddAccountUseCase
   sut: SignUpController
 }
 
@@ -182,7 +182,7 @@ describe('SignUp Controller', () => {
     expect(isValidSpy).toHaveBeenCalledWith('john@doe.com')
   })
 
-  it('Should calls AddAccount with correct values', async () => {
+  it('Should calls AddAccountUseCase with correct values', async () => {
     const { sut, addAccountStub } = makeSUT()
 
     const addSpy = vitest.spyOn(addAccountStub, 'execute')
@@ -227,7 +227,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new InternalServerError())
   })
 
-  it('Should returns 500 if AddAccount throws', async () => {
+  it('Should returns 500 if AddAccountUseCase throws', async () => {
     const { sut, addAccountStub } = makeSUT()
 
     vitest.spyOn(addAccountStub, 'execute').mockImplementationOnce(async () => {

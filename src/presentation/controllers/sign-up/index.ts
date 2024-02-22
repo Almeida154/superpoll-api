@@ -2,7 +2,7 @@ import {
   HttpRequest,
   HttpResponse,
   Controller,
-  AddAccount,
+  AddAccountUseCase,
   EmailValidator,
 } from './protocols'
 
@@ -16,11 +16,14 @@ import {
 
 export class SignUpController implements Controller {
   private readonly emailValidator: EmailValidator
-  private readonly addAccount: AddAccount
+  private readonly addAccountUseCase: AddAccountUseCase
 
-  constructor(emailValidator: EmailValidator, addAccount: AddAccount) {
+  constructor(
+    emailValidator: EmailValidator,
+    addAccountUseCase: AddAccountUseCase,
+  ) {
     this.emailValidator = emailValidator
-    this.addAccount = addAccount
+    this.addAccountUseCase = addAccountUseCase
   }
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -47,7 +50,11 @@ export class SignUpController implements Controller {
 
       if (!isEmailValid) return badRequest(new InvalidParamError('email'))
 
-      const account = await this.addAccount.execute({ email, password, name })
+      const account = await this.addAccountUseCase.execute({
+        email,
+        password,
+        name,
+      })
 
       return ok(account)
     } catch (error) {
