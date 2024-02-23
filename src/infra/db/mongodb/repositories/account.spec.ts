@@ -3,6 +3,10 @@ import { MongoClient } from '@/infra/db/mongodb/helpers/mongo-client'
 
 import { AccountMongoRepository } from './account'
 
+const makeSUT = () => {
+  return new AccountMongoRepository()
+}
+
 describe('Mongo Repository', () => {
   beforeAll(async () => {
     await MongoClient.connect({ useMemory: true })
@@ -13,7 +17,7 @@ describe('Mongo Repository', () => {
   })
 
   it('Should returns an account on success', async () => {
-    const sut = new AccountMongoRepository()
+    const sut = makeSUT()
 
     const account = await sut.add({
       name: 'any_name',
