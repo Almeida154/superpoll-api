@@ -17,6 +17,14 @@ const makeSUT = (): ISut => {
   return { sut, salt }
 }
 
+vitest.mock('bcrypt', () => ({
+  default: {
+    async hash(): Promise<string> {
+      return new Promise((resolve) => resolve('hash'))
+    },
+  },
+}))
+
 describe('BcryptAdapter', () => {
   it('Should calls bcrypt with correct values', async () => {
     const { sut, salt } = makeSUT()
@@ -26,5 +34,9 @@ describe('BcryptAdapter', () => {
     expect(hashSpy).toHaveBeenCalledWith('any_value', salt)
   })
 
-  it('Should returns encrypted value', async () => null)
+  it('Should returns encrypted value on success', async () => {
+    const { sut } = makeSUT()
+    const hash = await sut.encrypt('any_value')
+    expect(hash).toBe('hash')
+  })
 })
