@@ -3,6 +3,7 @@ import { MongoClient as Client, Collection } from 'mongodb'
 
 interface IConnectOptions {
   useMemory?: boolean
+  url?: string
 }
 
 export const MongoClient = {
@@ -14,7 +15,7 @@ export const MongoClient = {
       return this.connectToMemoryServer()
     }
 
-    this.client = await Client.connect(process.env.__MONGO_URI__)
+    this.client = await Client.connect(options.url)
   },
 
   async connectToMemoryServer(): Promise<void> {
