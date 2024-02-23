@@ -4,20 +4,17 @@ import { IEncrypter, IAddAccountRepository } from '@/data/protocols'
 
 export class AddAccountUseCase implements IAddAccountUseCase {
   private readonly encrypter: IEncrypter
-  private readonly addAccountRepository: IAddAccountRepository
+  private readonly repository: IAddAccountRepository
 
-  constructor(
-    addAccountRepository: IAddAccountRepository,
-    encrypter: IEncrypter,
-  ) {
-    this.addAccountRepository = addAccountRepository
+  constructor(repository: IAddAccountRepository, encrypter: IEncrypter) {
+    this.repository = repository
     this.encrypter = encrypter
   }
 
   async execute(account: IAddAccountModel): Promise<AccountModel> {
     const hashedPassword = await this.encrypter.encrypt(account.password)
 
-    const data = await this.addAccountRepository.dispatch({
+    const data = await this.repository.add({
       ...account,
       password: hashedPassword,
     })

@@ -18,7 +18,7 @@ const makeEncrypter = (): IEncrypter => {
 
 const makeAddAccountRepository = (): IAddAccountRepository => {
   class AddAccountRepositoryStub implements IAddAccountRepository {
-    async dispatch(): Promise<AccountModel> {
+    async add(): Promise<AccountModel> {
       const fakeAccount: AccountModel = {
         id: 'valid_id',
         name: 'valid_name',
@@ -89,7 +89,7 @@ describe('IAddAccountUseCase', () => {
   it('Should calls AddAccountRepository with correct object', async () => {
     const { sut, addAccountRepositoryStub } = makeSUT()
 
-    const dispatchSpy = vitest.spyOn(addAccountRepositoryStub, 'dispatch')
+    const addSpy = vitest.spyOn(addAccountRepositoryStub, 'add')
 
     const addAccountData: IAddAccountModel = {
       email: 'valid@email.com',
@@ -99,7 +99,7 @@ describe('IAddAccountUseCase', () => {
 
     await sut.execute(addAccountData)
 
-    expect(dispatchSpy).toHaveBeenCalledWith({
+    expect(addSpy).toHaveBeenCalledWith({
       ...addAccountData,
       password: 'hashed_password',
     })
@@ -109,7 +109,7 @@ describe('IAddAccountUseCase', () => {
     const { sut, addAccountRepositoryStub } = makeSUT()
 
     vitest
-      .spyOn(addAccountRepositoryStub, 'dispatch')
+      .spyOn(addAccountRepositoryStub, 'add')
       .mockReturnValueOnce(
         new Promise((resolve, reject) => reject(new Error())),
       )
