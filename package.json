@@ -33,7 +33,8 @@
     "prettier": "^3.2.5",
     "typescript": "^5.3.3",
     "typescript-eslint": "^7.0.1",
-    "vitest": "^1.3.0"
+    "vitest": "^1.3.0",
+    "vitest-mongodb": "^0.0.5"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
