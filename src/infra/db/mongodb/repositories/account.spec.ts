@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { MongoClient } from '@/infra/db/mongodb/helpers/mongo-client'
 
 import { AccountMongoRepository } from './account'
@@ -14,6 +14,11 @@ describe('Mongo Repository', () => {
 
   afterAll(async () => {
     await MongoClient.disconnect()
+  })
+
+  beforeEach(async () => {
+    const collection = MongoClient.getCollection('accounts')
+    await collection.deleteMany()
   })
 
   it('Should returns an account on success', async () => {
