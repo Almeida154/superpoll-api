@@ -6,6 +6,8 @@ interface IConnectOptions {
   url?: string
 }
 
+type Result<T> = T & { _id?: string }
+
 export const MongoClient = {
   client: null as Client,
   usingMemory: false,
@@ -31,5 +33,10 @@ export const MongoClient = {
 
   getCollection(name: string): Collection {
     return this.client.db().collection(name)
+  },
+
+  map<T>(resultItem: Partial<Result<T>>): T {
+    const { _id, ...rest } = resultItem
+    return { id: _id, ...rest } as T
   },
 }
