@@ -13,22 +13,34 @@ export const MongoClient = {
   usingMemory: false,
 
   async connect(options?: IConnectOptions): Promise<void> {
-    if (options?.useMemory) {
-      return this.connectToMemoryServer()
-    }
+    this.usingMemory = options?.useMemory
 
-    this.client = await Client.connect(options.url)
+    return options?.useMemory
+      ? this.connectToMemoryServer()
+      : this.connectToServer(options?.url)
+  },
+
+  async connectToServer(url: string): Promise<void> {
+    this.client = await Client.connect(url)
   },
 
   async connectToMemoryServer(): Promise<void> {
     await setup()
-    this.usingMemory = true
     this.client = await Client.connect(globalThis.__MONGO_URI__)
   },
 
   async disconnect(): Promise<void> {
+    return this.usingMemory
+      ? this.disconnectFromMemoryServer()
+      : this.disconnectFromServer()
+  },
+
+  async disconnectFromServer() {
     await this.client.close()
-    if (this.usingMemory) teardown()
+  },
+
+  async disconnectFromMemoryServer() {
+    await teardown()
   },
 
   getCollection(name: string): Collection {
