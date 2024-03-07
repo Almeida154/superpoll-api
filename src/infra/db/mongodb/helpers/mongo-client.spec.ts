@@ -61,7 +61,12 @@ describe('Mongo Client Helper', () => {
   it('Should reconnects if mongodb is down', async () => {
     await sut.connect({ useMemory: true })
 
-    const collection = sut.getCollection('accounts')
+    let collection = await sut.getCollection('accounts')
+    expect(collection).toBeTruthy()
+
+    await sut.disconnect()
+
+    collection = await sut.getCollection('accounts')
     expect(collection).toBeTruthy()
   })
 })
