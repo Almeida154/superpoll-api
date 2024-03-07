@@ -1,5 +1,5 @@
 import { setup, teardown } from 'vitest-mongodb'
-import { MongoClient as Client, Collection } from 'mongodb'
+import { MongoClient as Client, Collection, Db } from 'mongodb'
 
 interface IConnectOptions {
   useMemory?: boolean
@@ -9,11 +9,14 @@ interface IConnectOptions {
 type Result<T> = T & { _id?: string }
 
 export const MongoClient = {
+  db: null as Db,
   client: null as Client,
   usingMemory: false,
+  url: null as string,
 
   async connect(options?: IConnectOptions): Promise<void> {
     this.usingMemory = options?.useMemory
+    this.url = options?.url
 
     options?.useMemory
       ? await this.connectToMemoryServer()
@@ -38,16 +41,18 @@ export const MongoClient = {
   async disconnectFromServer() {
     await this.client?.close()
     this.client = null
-    this.usingMemory = false
   },
 
   async disconnectFromMemoryServer() {
-    await teardown()
     this.client = null
-    this.usingMemory = false
+    await teardown()
   },
 
-  getCollection(name: string): Collection {
+  async getCollection(name: string): Promise<Collection> {
+    if (!this.client?.db()) {
+      await this.connect({ useMemory: this.usingMemory, url: this.url })
+    }
+
     return this.client.db().collection(name)
   },
 

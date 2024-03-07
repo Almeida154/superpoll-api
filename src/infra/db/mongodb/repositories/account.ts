@@ -6,7 +6,7 @@ import { IAddAccountModel } from '@/domain/usecases'
 
 export class AccountMongoRepository implements IAddAccountRepository {
   async add(account: IAddAccountModel): Promise<AccountModel> {
-    const collection = MongoClient.getCollection('accounts')
+    const collection = await MongoClient.getCollection('accounts')
     await collection.insertOne(account)
 
     return MongoClient.map<AccountModel>(account)
