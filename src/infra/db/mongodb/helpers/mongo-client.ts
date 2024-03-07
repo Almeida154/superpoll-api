@@ -15,9 +15,9 @@ export const MongoClient = {
   async connect(options?: IConnectOptions): Promise<void> {
     this.usingMemory = options?.useMemory
 
-    return options?.useMemory
-      ? this.connectToMemoryServer()
-      : this.connectToServer(options?.url)
+    options?.useMemory
+      ? await this.connectToMemoryServer()
+      : await this.connectToServer(options?.url)
   },
 
   async connectToServer(url: string): Promise<void> {
@@ -30,17 +30,21 @@ export const MongoClient = {
   },
 
   async disconnect(): Promise<void> {
-    return this.usingMemory
-      ? this.disconnectFromMemoryServer()
-      : this.disconnectFromServer()
+    this.usingMemory
+      ? await this.disconnectFromMemoryServer()
+      : await this.disconnectFromServer()
   },
 
   async disconnectFromServer() {
-    await this.client.close()
+    await this.client?.close()
+    this.client = null
+    this.usingMemory = false
   },
 
   async disconnectFromMemoryServer() {
     await teardown()
+    this.client = null
+    this.usingMemory = false
   },
 
   getCollection(name: string): Collection {
