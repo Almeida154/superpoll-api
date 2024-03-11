@@ -11,8 +11,8 @@ export class ControllerLogDecorator implements IController {
     this.controller = controller
   }
 
-  handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
-    const httpResponse = this.controller.handle(httpRequest)
+  async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
+    const httpResponse = await this.controller.handle(httpRequest)
     return httpResponse
   }
 }
