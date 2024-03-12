@@ -8,7 +8,7 @@ import {
 } from '@/presentation/protocols'
 
 import { internalServerError, ok } from '@/presentation/helpers/http'
-import { IErrorLogRepository } from '@/data/protocols/error-log-repository'
+import { IErrorLogRepository } from '@/data/protocols'
 import { AccountModel } from '@/domain/models'
 
 const makeController = (): IController => {
@@ -21,9 +21,9 @@ const makeController = (): IController => {
   return new ControllerStub()
 }
 
-const makeErrorLogRepository = (): IErrorLogRepository => {
+const makeLogRepository = (): IErrorLogRepository => {
   class ErrorLogRepositoryStub implements IErrorLogRepository {
-    log(): Promise<void> {
+    logError(): Promise<void> {
       return new Promise((resolve) => resolve())
     }
   }
@@ -61,7 +61,7 @@ interface ISut {
 
 const makeSUT = (): ISut => {
   const controllerStub = makeController()
-  const errorLogRepositoryStub = makeErrorLogRepository()
+  const errorLogRepositoryStub = makeLogRepository()
   const sut = new ControllerLogDecorator(controllerStub, errorLogRepositoryStub)
 
   return {
@@ -95,7 +95,7 @@ describe('ControllerLog Decorator', () => {
       new Promise((resolve) => resolve(makeFakeServerError())),
     )
 
-    const logSpy = vi.spyOn(errorLogRepositoryStub, 'log')
+    const logSpy = vi.spyOn(errorLogRepositoryStub, 'logError')
 
     await sut.handle(makeFakeRequest())
     expect(logSpy).toHaveBeenCalledWith('any_stack')
