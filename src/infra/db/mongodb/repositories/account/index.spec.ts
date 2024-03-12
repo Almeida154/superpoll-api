@@ -1,13 +1,13 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { MongoClient } from '@/infra/db/mongodb/helpers/mongo-client'
 
-import { AccountMongoRepository } from './account'
+import { AccountMongoRepository } from '.'
 
 const makeSUT = () => {
   return new AccountMongoRepository()
 }
 
-describe('Mongo Repository', () => {
+describe('AccountMongoRepository', () => {
   beforeAll(async () => {
     await MongoClient.connect({ useMemory: true })
   })

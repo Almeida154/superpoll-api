@@ -19,5 +19,5 @@ export const makeSignUpController = (): IController => {
     addAccountUseCase,
   )
 
-  return new ControllerLogDecorator(signUpController)
+  return new ControllerLogDecorator(signUpController, null)
 }
