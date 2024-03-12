@@ -7,10 +7,8 @@ import {
   IHttpResponse,
 } from '@/presentation/protocols'
 
-interface ISut {
-  sut: ControllerLogDecorator
-  controllerStub: IController
-}
+import { internalServerError } from '@/presentation/helpers/http'
+import { IErrorLogRepository } from '@/data/protocols/error-log-repository'
 
 const makeController = (): IController => {
   class ControllerStub implements IController {
@@ -28,13 +26,31 @@ const makeController = (): IController => {
   return new ControllerStub()
 }
 
+const makeErrorLogRepository = (): IErrorLogRepository => {
+  class ErrorLogRepositoryStub implements IErrorLogRepository {
+    log(): Promise<void> {
+      return new Promise((resolve) => resolve())
+    }
+  }
+
+  return new ErrorLogRepositoryStub()
+}
+
+interface ISut {
+  sut: ControllerLogDecorator
+  controllerStub: IController
+  errorLogRepositoryStub: IErrorLogRepository
+}
+
 const makeSUT = (): ISut => {
   const controllerStub = makeController()
-  const sut = new ControllerLogDecorator(controllerStub)
+  const errorLogRepositoryStub = makeErrorLogRepository()
+  const sut = new ControllerLogDecorator(controllerStub, errorLogRepositoryStub)
 
   return {
     controllerStub,
     sut,
+    errorLogRepositoryStub,
   }
 }
 
@@ -45,12 +61,7 @@ describe('ControllerLog Decorator', () => {
     const handleSpy = vi.spyOn(controllerStub, 'handle')
 
     const httpRequest: IHttpRequest = {
-      body: {
-        email: 'any@mail.com',
-        name: 'anu_name',
-        password: 'any_password',
-        passwordConfirmation: 'any_password',
-      },
+      body: { anything: 'anything' },
     }
 
     await sut.handle(httpRequest)
@@ -61,12 +72,7 @@ describe('ControllerLog Decorator', () => {
     const { sut } = makeSUT()
 
     const httpRequest: IHttpRequest = {
-      body: {
-        email: 'any@mail.com',
-        name: 'anu_name',
-        password: 'any_password',
-        passwordConfirmation: 'any_password',
-      },
+      body: { anything: 'anything' },
     }
 
     const httpResponse = await sut.handle(httpRequest)
@@ -77,5 +83,27 @@ describe('ControllerLog Decorator', () => {
         anything: 'anything',
       },
     })
+  })
+
+  it('Should calls ErrorLogRepository with correct error if controller returns a server error', async () => {
+    const { sut, controllerStub, errorLogRepositoryStub } = makeSUT()
+
+    const fakeError = new Error()
+    fakeError.stack = 'any_stack'
+
+    const error = internalServerError(fakeError)
+
+    vi.spyOn(controllerStub, 'handle').mockReturnValueOnce(
+      new Promise((resolve) => resolve(error)),
+    )
+
+    const logSpy = vi.spyOn(errorLogRepositoryStub, 'log')
+
+    const httpRequest: IHttpRequest = {
+      body: { anything: 'anything' },
+    }
+
+    await sut.handle(httpRequest)
+    expect(logSpy).toHaveBeenCalledWith('any_stack')
   })
 })
