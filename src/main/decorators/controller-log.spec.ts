@@ -7,19 +7,14 @@ import {
   IHttpResponse,
 } from '@/presentation/protocols'
 
-import { internalServerError } from '@/presentation/helpers/http'
+import { internalServerError, ok } from '@/presentation/helpers/http'
 import { IErrorLogRepository } from '@/data/protocols/error-log-repository'
+import { AccountModel } from '@/domain/models'
 
 const makeController = (): IController => {
   class ControllerStub implements IController {
     handle(): Promise<IHttpResponse> {
-      const httpResponse: IHttpResponse = {
-        statusCode: 200,
-        body: {
-          anything: 'anything',
-        },
-      }
-      return new Promise((resolve) => resolve(httpResponse))
+      return new Promise((resolve) => resolve(ok(makeFakeAccount())))
     }
   }
 
@@ -35,6 +30,28 @@ const makeErrorLogRepository = (): IErrorLogRepository => {
 
   return new ErrorLogRepositoryStub()
 }
+
+const makeFakeServerError = (): IHttpResponse => {
+  const fakeError = new Error()
+  fakeError.stack = 'any_stack'
+  return internalServerError(fakeError)
+}
+
+const makeFakeAccount = (): AccountModel => ({
+  id: 'valid_id',
+  name: 'any_name',
+  email: 'any@mail.com',
+  password: 'any_password',
+})
+
+const makeFakeRequest = (): IHttpRequest => ({
+  body: {
+    name: 'any_name',
+    email: 'any@mail.com',
+    password: 'any_password',
+    passwordConfirmation: 'any_password',
+  },
+})
 
 interface ISut {
   sut: ControllerLogDecorator
@@ -60,50 +77,27 @@ describe('ControllerLog Decorator', () => {
 
     const handleSpy = vi.spyOn(controllerStub, 'handle')
 
-    const httpRequest: IHttpRequest = {
-      body: { anything: 'anything' },
-    }
-
-    await sut.handle(httpRequest)
-    expect(handleSpy).toHaveBeenCalledWith(httpRequest)
+    await sut.handle(makeFakeRequest())
+    expect(handleSpy).toHaveBeenCalledWith(makeFakeRequest())
   })
 
   it('Should returns the same result of the controller', async () => {
     const { sut } = makeSUT()
 
-    const httpRequest: IHttpRequest = {
-      body: { anything: 'anything' },
-    }
-
-    const httpResponse = await sut.handle(httpRequest)
-
-    expect(httpResponse).toEqual({
-      statusCode: 200,
-      body: {
-        anything: 'anything',
-      },
-    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok(makeFakeAccount()))
   })
 
   it('Should calls ErrorLogRepository with correct error if controller returns a server error', async () => {
     const { sut, controllerStub, errorLogRepositoryStub } = makeSUT()
 
-    const fakeError = new Error()
-    fakeError.stack = 'any_stack'
-
-    const error = internalServerError(fakeError)
-
     vi.spyOn(controllerStub, 'handle').mockReturnValueOnce(
-      new Promise((resolve) => resolve(error)),
+      new Promise((resolve) => resolve(makeFakeServerError())),
     )
 
     const logSpy = vi.spyOn(errorLogRepositoryStub, 'log')
 
-    const httpRequest: IHttpRequest = {
-      body: { anything: 'anything' },
-    }
-
-    await sut.handle(httpRequest)
+    await sut.handle(makeFakeRequest())
     expect(logSpy).toHaveBeenCalledWith('any_stack')
   })
 })
