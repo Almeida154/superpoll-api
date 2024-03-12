@@ -19,19 +19,25 @@ const makeEncrypter = (): IEncrypter => {
 const makeAddAccountRepository = (): IAddAccountRepository => {
   class AddAccountRepositoryStub implements IAddAccountRepository {
     async add(): Promise<AccountModel> {
-      const fakeAccount: AccountModel = {
-        id: 'valid_id',
-        name: 'valid_name',
-        email: 'valid_email',
-        password: 'hashed_password',
-      }
-
-      return new Promise((resolve) => resolve(fakeAccount))
+      return new Promise((resolve) => resolve(makeFakeAccount()))
     }
   }
 
   return new AddAccountRepositoryStub()
 }
+
+const makeFakeAccount = (): AccountModel => ({
+  id: 'valid_id',
+  name: 'valid_name',
+  email: 'valid_email',
+  password: 'hashed_password',
+})
+
+const makeFakeAddAccountData = (): IAddAccountModel => ({
+  email: 'valid@email.com',
+  name: 'valid_name',
+  password: 'valid_password',
+})
 
 interface ISut {
   sut: IAddAccountUseCase
@@ -56,15 +62,8 @@ describe('IAddAccountUseCase', () => {
     const { sut, encrypterStub } = makeSUT()
     const encryptSpy = vitest.spyOn(encrypterStub, 'encrypt')
 
-    const addAccountData: IAddAccountModel = {
-      email: 'valid@email.com',
-      name: 'valid_name',
-      password: 'valid_password',
-    }
-
-    await sut.execute(addAccountData)
-
-    expect(encryptSpy).toHaveBeenCalledWith(addAccountData.password)
+    await sut.execute(makeFakeAddAccountData())
+    expect(encryptSpy).toHaveBeenCalledWith('valid_password')
   })
 
   it('Should throws if Encrypter throws', async () => {
@@ -76,13 +75,7 @@ describe('IAddAccountUseCase', () => {
         new Promise((resolve, reject) => reject(new Error())),
       )
 
-    const addAccountData: IAddAccountModel = {
-      email: 'valid@email.com',
-      name: 'valid_name',
-      password: 'valid_password',
-    }
-
-    const accountPromise = sut.execute(addAccountData)
+    const accountPromise = sut.execute(makeFakeAddAccountData())
     await expect(accountPromise).rejects.toThrow()
   })
 
@@ -91,16 +84,9 @@ describe('IAddAccountUseCase', () => {
 
     const addSpy = vitest.spyOn(addAccountRepositoryStub, 'add')
 
-    const addAccountData: IAddAccountModel = {
-      email: 'valid@email.com',
-      name: 'valid_name',
-      password: 'valid_password',
-    }
-
-    await sut.execute(addAccountData)
-
+    await sut.execute(makeFakeAddAccountData())
     expect(addSpy).toHaveBeenCalledWith({
-      ...addAccountData,
+      ...makeFakeAddAccountData(),
       password: 'hashed_password',
     })
   })
@@ -114,32 +100,14 @@ describe('IAddAccountUseCase', () => {
         new Promise((resolve, reject) => reject(new Error())),
       )
 
-    const addAccountData: IAddAccountModel = {
-      email: 'valid@email.com',
-      name: 'valid_name',
-      password: 'valid_password',
-    }
-
-    const accountPromise = sut.execute(addAccountData)
+    const accountPromise = sut.execute(makeFakeAddAccountData())
     await expect(accountPromise).rejects.toThrow()
   })
 
   it('Should returns an account on success', async () => {
     const { sut } = makeSUT()
 
-    const addAccountData: IAddAccountModel = {
-      email: 'valid@email.com',
-      name: 'valid_name',
-      password: 'valid_password',
-    }
-
-    const account = await sut.execute(addAccountData)
-
-    expect(account).toEqual({
-      id: 'valid_id',
-      name: 'valid_name',
-      email: 'valid_email',
-      password: 'hashed_password',
-    })
+    const account = await sut.execute(makeFakeAddAccountData())
+    expect(account).toEqual(makeFakeAccount())
   })
 })
