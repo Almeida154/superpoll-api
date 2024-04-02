@@ -25,7 +25,7 @@ describe('LogMongoRepository', () => {
     await collection.deleteMany()
   })
 
-  it('Should create an error log on success', async () => {
+  it('should create an error log on success', async () => {
     const sut = makeSUT()
     await sut.logError('any_sack')
     const count = await collection.countDocuments()

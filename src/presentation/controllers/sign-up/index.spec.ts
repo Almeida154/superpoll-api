@@ -72,7 +72,7 @@ const makeSUT = (): ISut => {
 }
 
 describe('SignUp Controller', () => {
-  it('Should returns 400 if no name was provided', async () => {
+  it('should return 400 if no name was provided', async () => {
     const { sut } = makeSUT()
 
     const httpRequest = {
@@ -87,7 +87,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse).toEqual(badRequest(new NoProvidedParamError('name')))
   })
 
-  it('Should returns 400 if no email was provided', async () => {
+  it('should return 400 if no email was provided', async () => {
     const { sut } = makeSUT()
 
     const httpRequest = {
@@ -102,7 +102,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse).toEqual(badRequest(new NoProvidedParamError('email')))
   })
 
-  it('Should returns 400 if no password was provided', async () => {
+  it('should return 400 if no password was provided', async () => {
     const { sut } = makeSUT()
 
     const httpRequest = {
@@ -119,7 +119,7 @@ describe('SignUp Controller', () => {
     )
   })
 
-  it('Should returns 400 if no password confirmation was provided', async () => {
+  it('should return 400 if no password confirmation was provided', async () => {
     const { sut } = makeSUT()
 
     const httpRequest = {
@@ -136,7 +136,7 @@ describe('SignUp Controller', () => {
     )
   })
 
-  it('Should returns 400 if an invalid email was provided', async () => {
+  it('should return 400 if an invalid email was provided', async () => {
     const { sut, emailValidatorStub } = makeSUT()
 
     vitest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false)
@@ -145,7 +145,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('email')))
   })
 
-  it('Should returns 400 if password confirmation fails', async () => {
+  it('should return 400 if password confirmation fails', async () => {
     const { sut } = makeSUT()
 
     const httpRequest = {
@@ -163,7 +163,7 @@ describe('SignUp Controller', () => {
     )
   })
 
-  it('Should calls EmailValidator with correct email', async () => {
+  it('should call EmailValidator with correct email', async () => {
     const { sut, emailValidatorStub } = makeSUT()
 
     const isValidSpy = vitest.spyOn(emailValidatorStub, 'isValid')
@@ -172,7 +172,7 @@ describe('SignUp Controller', () => {
     expect(isValidSpy).toHaveBeenCalledWith('any@mail.com')
   })
 
-  it('Should calls AddAccountUseCase with correct values', async () => {
+  it('should call AddAccountUseCase with correct values', async () => {
     const { sut, addAccountUseCaseStub } = makeSUT()
 
     const addSpy = vitest.spyOn(addAccountUseCaseStub, 'execute')
@@ -186,7 +186,7 @@ describe('SignUp Controller', () => {
     })
   })
 
-  it('Should returns 500 if EmailValidator throws', async () => {
+  it('should return 500 if EmailValidator throws', async () => {
     const { sut, emailValidatorStub } = makeSUT()
 
     vitest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
@@ -199,7 +199,7 @@ describe('SignUp Controller', () => {
     )
   })
 
-  it('Should returns 500 if AddAccountUseCase throws', async () => {
+  it('should return 500 if AddAccountUseCase throws', async () => {
     const { sut, addAccountUseCaseStub } = makeSUT()
 
     vitest
@@ -214,7 +214,7 @@ describe('SignUp Controller', () => {
     )
   })
 
-  it('Should returns 200 if valid data is provided', async () => {
+  it('should return 200 if valid data is provided', async () => {
     const { sut } = makeSUT()
 
     const httpResponse = await sut.handle(makeFakeRequest())

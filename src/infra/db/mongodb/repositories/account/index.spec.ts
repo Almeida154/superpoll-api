@@ -21,7 +21,7 @@ describe('AccountMongoRepository', () => {
     await collection.deleteMany()
   })
 
-  it('Should returns an account on success', async () => {
+  it('should return an account on success', async () => {
     const sut = makeSUT()
 
     const account = await sut.add({

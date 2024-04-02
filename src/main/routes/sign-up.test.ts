@@ -18,7 +18,7 @@ describe('SignUp Routes', () => {
     await collection.deleteMany()
   })
 
-  it('Should returns an account on success', async () => {
+  it('should return an account on success', async () => {
     await request(app)
       .post('/api/sign-up')
       .send({

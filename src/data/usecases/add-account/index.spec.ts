@@ -58,7 +58,7 @@ const makeSUT = (): ISut => {
 }
 
 describe('IAddAccountUseCase', () => {
-  it('Should calls Encrypter with correct password', async () => {
+  it('should call Encrypter with correct password', async () => {
     const { sut, encrypterStub } = makeSUT()
     const encryptSpy = vitest.spyOn(encrypterStub, 'encrypt')
 
@@ -66,7 +66,7 @@ describe('IAddAccountUseCase', () => {
     expect(encryptSpy).toHaveBeenCalledWith('valid_password')
   })
 
-  it('Should throws if Encrypter throws', async () => {
+  it('should throw if Encrypter throws', async () => {
     const { sut, encrypterStub } = makeSUT()
 
     vitest
@@ -79,7 +79,7 @@ describe('IAddAccountUseCase', () => {
     await expect(accountPromise).rejects.toThrow()
   })
 
-  it('Should calls AddAccountRepository with correct object', async () => {
+  it('should call AddAccountRepository with correct object', async () => {
     const { sut, addAccountRepositoryStub } = makeSUT()
 
     const addSpy = vitest.spyOn(addAccountRepositoryStub, 'add')
@@ -91,7 +91,7 @@ describe('IAddAccountUseCase', () => {
     })
   })
 
-  it('Should throws if AddAccountRepository throws', async () => {
+  it('should throw if AddAccountRepository throws', async () => {
     const { sut, addAccountRepositoryStub } = makeSUT()
 
     vitest
@@ -104,7 +104,7 @@ describe('IAddAccountUseCase', () => {
     await expect(accountPromise).rejects.toThrow()
   })
 
-  it('Should returns an account on success', async () => {
+  it('should return an account on success', async () => {
     const { sut } = makeSUT()
 
     const account = await sut.execute(makeFakeAddAccountData())

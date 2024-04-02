@@ -26,7 +26,7 @@ vitest.mock('bcrypt', () => ({
 }))
 
 describe('BcryptAdapter', () => {
-  it('Should calls bcrypt with correct values', async () => {
+  it('should call bcrypt with correct values', async () => {
     const { sut, salt } = makeSUT()
 
     const hashSpy = vitest.spyOn(bcrypt, 'hash')
@@ -34,7 +34,7 @@ describe('BcryptAdapter', () => {
     expect(hashSpy).toHaveBeenCalledWith('any_value', salt)
   })
 
-  it('Should throws if bcrypt throws', async () => {
+  it('should throw if bcrypt throws', async () => {
     const { sut } = makeSUT()
 
     vitest.spyOn(bcrypt, 'hash').mockImplementationOnce(async () => {
@@ -45,7 +45,7 @@ describe('BcryptAdapter', () => {
     await expect(hashPromise).rejects.toThrow()
   })
 
-  it('Should returns encrypted value on success', async () => {
+  it('should return encrypted value on success', async () => {
     const { sut } = makeSUT()
     const hash = await sut.encrypt('any_value')
     expect(hash).toBe('hash')
