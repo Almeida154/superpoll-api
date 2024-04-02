@@ -1,9 +1,13 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { Collection } from 'mongodb'
 
+import { MongoClient } from '../../helpers/mongo-client'
+
 import { LogMongoRepository } from '.'
 
-import { MongoClient } from '../../helpers/mongo-client'
+const makeSUT = () => {
+  return new LogMongoRepository()
+}
 
 describe('LogMongoRepository', () => {
   let collection: Collection
@@ -22,7 +26,7 @@ describe('LogMongoRepository', () => {
   })
 
   it('Should create an error log on success', async () => {
-    const sut = new LogMongoRepository()
+    const sut = makeSUT()
     await sut.logError('any_sack')
     const count = await collection.countDocuments()
     expect(count).toBe(1)
