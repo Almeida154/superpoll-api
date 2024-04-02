@@ -8,10 +8,10 @@ export const adaptRoute = (controller: IController) => {
     }
 
     const response = await controller.handle(request)
-    const success = response.statusCode === 200
+    const hasSucceed = response.statusCode === 200
 
     return res
       .status(response.statusCode)
-      .send(success ? response.body : { error: response.body.message })
+      .send(hasSucceed ? response.body : { error: response.body.message })
   }
 }
