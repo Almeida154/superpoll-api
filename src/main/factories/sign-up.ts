@@ -2,7 +2,10 @@ import { SignUpController } from '@/presentation/controllers/sign-up'
 import { AddAccountUseCase } from '@/data/usecases'
 import { EmailValidatorAdapter } from '@/utils/email-validator/validator'
 import { BcryptAdapter } from '@/infra/cryptography/bcrypt'
-import { AccountMongoRepository } from '@/infra/db/mongodb/repositories/account'
+import {
+  AccountMongoRepository,
+  LogMongoRepository,
+} from '@/infra/db/mongodb/repositories'
 import { IController } from '@/presentation/protocols'
 
 import { ControllerLogDecorator } from '../decorators'
@@ -19,5 +22,6 @@ export const makeSignUpController = (): IController => {
     addAccountUseCase,
   )
 
-  return new ControllerLogDecorator(signUpController, null)
+  const logMongoRepository = new LogMongoRepository()
+  return new ControllerLogDecorator(signUpController, logMongoRepository)
 }
