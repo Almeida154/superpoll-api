@@ -6,9 +6,21 @@ import { NoProvidedParamError } from '@/presentation/errors'
 
 import { LoginController } from '.'
 
+interface ISut {
+  sut: LoginController
+}
+
+const makeSUT = (): ISut => {
+  const sut = new LoginController()
+
+  return {
+    sut,
+  }
+}
+
 describe('LoginController', () => {
   it('should return 400 if no email is provided', async () => {
-    const sut = new LoginController()
+    const { sut } = makeSUT()
     const httpRequest: IHttpRequest = {
       body: {
         password: 'any_password',
@@ -19,7 +31,7 @@ describe('LoginController', () => {
   })
 
   it('should return 400 if no password is provided', async () => {
-    const sut = new LoginController()
+    const { sut } = makeSUT()
     const httpRequest: IHttpRequest = {
       body: {
         email: 'any@email',
