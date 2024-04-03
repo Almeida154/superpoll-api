@@ -1,3 +1,4 @@
+import { IAuthentication } from '@/domain/usecases'
 import { InvalidParamError, NoProvidedParamError } from '@/presentation/errors'
 import { badRequest, internalServerError } from '@/presentation/helpers/http'
 
@@ -10,9 +11,14 @@ import {
 
 export class LoginController implements IController {
   private readonly emailValidator: IEmailValidator
+  private readonly authentication: IAuthentication
 
-  constructor(emailValidator: IEmailValidator) {
+  constructor(
+    emailValidator: IEmailValidator,
+    authentication: IAuthentication,
+  ) {
     this.emailValidator = emailValidator
+    this.authentication = authentication
   }
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
@@ -25,6 +31,8 @@ export class LoginController implements IController {
       const isEmailValid = this.emailValidator.isValid(email)
 
       if (!isEmailValid) return badRequest(new InvalidParamError('email'))
+
+      await this.authentication.auth(email, password)
     } catch (error) {
       return internalServerError(error)
     }
