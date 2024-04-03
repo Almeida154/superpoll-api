@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { IEmailValidator, IHttpRequest } from '@/presentation/protocols'
-import { badRequest } from '@/presentation/helpers/http'
+import { badRequest, internalServerError } from '@/presentation/helpers/http'
 import { InvalidParamError, NoProvidedParamError } from '@/presentation/errors'
 
 import { LoginController } from '.'
@@ -67,6 +67,15 @@ describe('LoginController', () => {
     vi.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false)
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('email')))
+  })
+
+  it('should return 500 if EmailValidator throws', async () => {
+    const { sut, emailValidatorStub } = makeSUT()
+    vi.spyOn(emailValidatorStub, 'isValid').mockImplementation(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(internalServerError(new Error()))
   })
 
   it('should return 404 if user not found', () => null)
