@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { IEmailValidator, IHttpRequest } from '@/presentation/protocols'
 import {
   badRequest,
-  internalServerError,
+  internalException,
   unauthorized,
 } from '@/presentation/helpers/http'
 import { InvalidParamError, NoProvidedParamError } from '@/presentation/errors'
@@ -94,7 +94,7 @@ describe('LoginController', () => {
       throw new Error()
     })
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(internalServerError(new Error()))
+    expect(httpResponse).toEqual(internalException(new Error()))
   })
 
   it('should call Authentication with correct values', async () => {

@@ -8,11 +8,7 @@ import {
   InvalidParamError,
 } from '@/presentation/errors'
 
-import {
-  ok,
-  internalServerError,
-  badRequest,
-} from '@/presentation/helpers/http'
+import { ok, internalException, badRequest } from '@/presentation/helpers/http'
 
 import {
   IEmailValidator,
@@ -195,7 +191,7 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(
-      internalServerError(new InternalServerError(null)),
+      internalException(new InternalServerError(null)),
     )
   })
 
@@ -210,7 +206,7 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(
-      internalServerError(new InternalServerError(null)),
+      internalException(new InternalServerError(null)),
     )
   })
 

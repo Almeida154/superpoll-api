@@ -8,11 +8,7 @@ import {
 
 import { NoProvidedParamError, InvalidParamError } from '@/presentation/errors'
 
-import {
-  badRequest,
-  internalServerError,
-  ok,
-} from '@/presentation/helpers/http'
+import { badRequest, internalException, ok } from '@/presentation/helpers/http'
 
 export class SignUpController implements IController {
   private readonly emailValidator: IEmailValidator
@@ -58,7 +54,7 @@ export class SignUpController implements IController {
 
       return ok(account)
     } catch (error) {
-      return internalServerError(error)
+      return internalException(error)
     }
   }
 }

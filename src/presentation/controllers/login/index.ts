@@ -2,7 +2,7 @@ import { IAuthentication } from '@/domain/usecases'
 import { InvalidParamError, NoProvidedParamError } from '@/presentation/errors'
 import {
   badRequest,
-  internalServerError,
+  internalException,
   unauthorized,
 } from '@/presentation/helpers/http'
 
@@ -44,7 +44,7 @@ export class LoginController implements IController {
 
       if (!token) return unauthorized()
     } catch (error) {
-      return internalServerError(error)
+      return internalException(error)
     }
   }
 }

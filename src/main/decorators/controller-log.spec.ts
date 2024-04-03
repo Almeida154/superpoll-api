@@ -7,7 +7,7 @@ import {
   IHttpResponse,
 } from '@/presentation/protocols'
 
-import { internalServerError, ok } from '@/presentation/helpers/http'
+import { internalException, ok } from '@/presentation/helpers/http'
 import { IErrorLogRepository } from '@/data/protocols'
 import { AccountModel } from '@/domain/models'
 
@@ -34,7 +34,7 @@ const makeLogRepository = (): IErrorLogRepository => {
 const makeFakeServerError = (): IHttpResponse => {
   const fakeError = new Error()
   fakeError.stack = 'any_stack'
-  return internalServerError(fakeError)
+  return internalException(fakeError)
 }
 
 const makeFakeAccount = (): AccountModel => ({
