@@ -23,10 +23,14 @@ export class LoginController implements IController {
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
-      const { email, password } = httpRequest.body
+      const requiredFields = ['email', 'password']
 
-      if (!email) return badRequest(new NoProvidedParamError('email'))
-      if (!password) return badRequest(new NoProvidedParamError('password'))
+      for (const field of requiredFields) {
+        if (!httpRequest.body[field])
+          return badRequest(new NoProvidedParamError(field))
+      }
+
+      const { email, password } = httpRequest.body
 
       const isEmailValid = this.emailValidator.isValid(email)
 
