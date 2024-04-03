@@ -11,14 +11,25 @@ describe('LoginController', () => {
     const sut = new LoginController()
     const httpRequest: IHttpRequest = {
       body: {
-        password: '',
+        password: 'any_password',
       },
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new NoProvidedParamError('email')))
   })
 
-  it('should return 400 if no password is provided', () => null)
+  it('should return 400 if no password is provided', async () => {
+    const sut = new LoginController()
+    const httpRequest: IHttpRequest = {
+      body: {
+        email: 'any@email',
+      },
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(
+      badRequest(new NoProvidedParamError('password')),
+    )
+  })
 
   it('should return 404 if user not found', () => null)
 
