@@ -17,13 +17,12 @@ export class LoginController implements IController {
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
-      if (!httpRequest.body.email)
-        return badRequest(new NoProvidedParamError('email'))
+      const { email, password } = httpRequest.body
 
-      if (!httpRequest.body.password)
-        return badRequest(new NoProvidedParamError('password'))
+      if (!email) return badRequest(new NoProvidedParamError('email'))
+      if (!password) return badRequest(new NoProvidedParamError('password'))
 
-      const isEmailValid = this.emailValidator.isValid(httpRequest.body.email)
+      const isEmailValid = this.emailValidator.isValid(email)
 
       if (!isEmailValid) return badRequest(new InvalidParamError('email'))
     } catch (error) {
