@@ -4,6 +4,8 @@ import { IEmailValidator, IHttpRequest } from '@/presentation/protocols'
 import { badRequest, internalServerError } from '@/presentation/helpers/http'
 import { InvalidParamError, NoProvidedParamError } from '@/presentation/errors'
 
+import { IAuthentication } from '@/domain/usecases'
+
 import { LoginController } from '.'
 
 const makeFakeRequest = (): IHttpRequest => ({
@@ -23,18 +25,31 @@ const makeEmailValidator = (): IEmailValidator => {
   return new EmailValidatorStub()
 }
 
+const makeAuthentication = (): IAuthentication => {
+  class AuthenticationStub implements IAuthentication {
+    async auth(): Promise<string> {
+      return new Promise((resolve) => resolve('any_token'))
+    }
+  }
+
+  return new AuthenticationStub()
+}
+
 interface ISut {
   sut: LoginController
   emailValidatorStub: IEmailValidator
+  authenticationStub: IAuthentication
 }
 
 const makeSUT = (): ISut => {
   const emailValidatorStub = makeEmailValidator()
-  const sut = new LoginController(emailValidatorStub)
+  const authenticationStub = makeAuthentication()
+  const sut = new LoginController(emailValidatorStub, authenticationStub)
 
   return {
     sut,
     emailValidatorStub,
+    authenticationStub,
   }
 }
 
@@ -76,6 +91,13 @@ describe('LoginController', () => {
     })
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(internalServerError(new Error()))
+  })
+
+  it('should call Authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSUT()
+    const authSpy = vi.spyOn(authenticationStub, 'auth')
+    await sut.handle(makeFakeRequest())
+    expect(authSpy).toHaveBeenCalledWith('any@email', 'any_password')
   })
 
   it('should return 404 if user not found', () => null)
