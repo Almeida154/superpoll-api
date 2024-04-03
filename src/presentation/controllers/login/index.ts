@@ -1,4 +1,4 @@
-import { NoProvidedParamError } from '@/presentation/errors'
+import { InvalidParamError, NoProvidedParamError } from '@/presentation/errors'
 import { badRequest, internalServerError } from '@/presentation/helpers/http'
 
 import {
@@ -23,7 +23,9 @@ export class LoginController implements IController {
       if (!httpRequest.body.password)
         return badRequest(new NoProvidedParamError('password'))
 
-      this.emailValidator.isValid(httpRequest.body.email)
+      const isEmailValid = this.emailValidator.isValid(httpRequest.body.email)
+
+      if (!isEmailValid) return badRequest(new InvalidParamError('email'))
     } catch (error) {
       return internalServerError(error)
     }
