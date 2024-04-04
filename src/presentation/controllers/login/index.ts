@@ -5,6 +5,7 @@ import { InvalidParamError, NoProvidedParamError } from '@/presentation/errors'
 import {
   badRequest,
   internalException,
+  ok,
   unauthorized,
 } from '@/presentation/helpers/http'
 
@@ -42,9 +43,11 @@ export class LoginController implements IController {
 
       if (!isEmailValid) return badRequest(new InvalidParamError('email'))
 
-      const token = await this.authentication.auth(email, password)
+      const accessToken = await this.authentication.auth(email, password)
 
-      if (!token) return unauthorized()
+      if (!accessToken) return unauthorized()
+
+      return ok({ accessToken })
     } catch (error) {
       return internalException(error)
     }
