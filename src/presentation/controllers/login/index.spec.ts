@@ -1,11 +1,13 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { IEmailValidator, IHttpRequest } from '@/presentation/protocols'
+
 import {
   badRequest,
   internalException,
   unauthorized,
 } from '@/presentation/helpers/http'
+
 import { InvalidParamError, NoProvidedParamError } from '@/presentation/errors'
 
 import { IAuthentication } from '@/domain/usecases'
@@ -111,6 +113,15 @@ describe('LoginController', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(unauthorized())
+  })
+
+  it('should return 500 if Authentication throws', async () => {
+    const { sut, authenticationStub } = makeSUT()
+    vi.spyOn(authenticationStub, 'auth').mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error())),
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(internalException(new Error()))
   })
 
   it('should return 404 if user not found', () => null)

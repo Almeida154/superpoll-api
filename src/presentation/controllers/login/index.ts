@@ -1,5 +1,7 @@
 import { IAuthentication } from '@/domain/usecases'
+
 import { InvalidParamError, NoProvidedParamError } from '@/presentation/errors'
+
 import {
   badRequest,
   internalException,
