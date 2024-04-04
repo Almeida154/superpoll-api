@@ -5,6 +5,7 @@ import { IEmailValidator, IHttpRequest } from '@/presentation/protocols'
 import {
   badRequest,
   internalException,
+  ok,
   unauthorized,
 } from '@/presentation/helpers/http'
 
@@ -124,7 +125,9 @@ describe('LoginController', () => {
     expect(httpResponse).toEqual(internalException(new Error()))
   })
 
-  it('should return 404 if user not found', () => null)
-
-  it('should return 200 on success', () => null)
+  it('should return 200 if valid credentials are provided', async () => {
+    const { sut } = makeSUT()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok({ accessToken: 'any_token' }))
+  })
 })
