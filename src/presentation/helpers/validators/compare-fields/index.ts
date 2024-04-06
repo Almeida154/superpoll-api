@@ -1,5 +1,5 @@
 import { InvalidParamError } from '@/presentation/errors'
-import { IValidation } from './validation'
+import { IValidation } from '../validation'
 
 export class CompareFieldsValidation implements IValidation {
   private readonly fieldName: string
