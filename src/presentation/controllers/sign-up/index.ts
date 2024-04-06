@@ -6,7 +6,7 @@ import {
   IEmailValidator,
 } from './protocols'
 
-import { NoProvidedParamError, InvalidParamError } from '@/presentation/errors'
+import { InvalidParamError } from '@/presentation/errors'
 import { badRequest, internalException, ok } from '@/presentation/helpers/http'
 import { IValidation } from '@/presentation/helpers/validators'
 
@@ -29,18 +29,6 @@ export class SignUpController implements IController {
     try {
       const error = this.validation.validate(httpRequest.body)
       if (error) return badRequest(error)
-
-      const requiredFields = [
-        'name',
-        'email',
-        'password',
-        'passwordConfirmation',
-      ]
-
-      for (const field of requiredFields) {
-        if (!httpRequest.body[field])
-          return badRequest(new NoProvidedParamError(field))
-      }
 
       const { password, passwordConfirmation, email, name } = httpRequest.body
 
