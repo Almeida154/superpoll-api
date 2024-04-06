@@ -17,6 +17,8 @@ import {
   IHttpRequest,
 } from './protocols'
 
+import { IValidation } from '@/presentation/helpers/validators'
+
 const makeEmailValidator = (): IEmailValidator => {
   class EmailValidatorStub implements IEmailValidator {
     isValid(): boolean {
@@ -35,6 +37,16 @@ const makeAddAccountUseCase = (): IAddAccountUseCase => {
   }
 
   return new AddAccountStub()
+}
+
+const makeValidation = (): IValidation => {
+  class ValidationStub implements IValidation {
+    validate(): Error {
+      return null
+    }
+  }
+
+  return new ValidationStub()
 }
 
 const makeFakeAccount = (): AccountModel => ({
@@ -56,15 +68,21 @@ const makeFakeRequest = (): IHttpRequest => ({
 interface ISut {
   emailValidatorStub: IEmailValidator
   addAccountUseCaseStub: IAddAccountUseCase
+  validationStub: IValidation
   sut: SignUpController
 }
 
 const makeSUT = (): ISut => {
   const emailValidatorStub = makeEmailValidator()
   const addAccountUseCaseStub = makeAddAccountUseCase()
-  const sut = new SignUpController(emailValidatorStub, addAccountUseCaseStub)
+  const validationStub = makeValidation()
+  const sut = new SignUpController(
+    emailValidatorStub,
+    addAccountUseCaseStub,
+    validationStub,
+  )
 
-  return { emailValidatorStub, addAccountUseCaseStub, sut }
+  return { emailValidatorStub, addAccountUseCaseStub, validationStub, sut }
 }
 
 describe('SignUp Controller', () => {
@@ -215,5 +233,13 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok(makeFakeAccount()))
+  })
+
+  it('should call Validation with correct value', async () => {
+    const { sut, validationStub } = makeSUT()
+    const validateSpy = vitest.spyOn(validationStub, 'validate')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
   })
 })
