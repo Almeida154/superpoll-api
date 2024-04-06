@@ -15,9 +15,9 @@ describe('RequiredFieldValidation', () => {
     expect(error).toEqual(new NoProvidedParamError('requiredField'))
   })
 
-  it('should return null if validation does not fail', () => {
+  it('should not return if validation succeeds', () => {
     const sut = makeSUT()
     const error = sut.validate({ requiredField: 'required_field_value' })
-    expect(error).toBeUndefined()
+    expect(error).toBeFalsy()
   })
 })
