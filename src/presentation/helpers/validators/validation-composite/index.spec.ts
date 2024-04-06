@@ -39,6 +39,16 @@ describe('ValidationComposite', () => {
     expect(error).toEqual(new NoProvidedParamError('field'))
   })
 
+  it('should return the first error if more than one validation fails', () => {
+    const { sut, validationStubs } = makeSUT()
+    vi.spyOn(validationStubs[0], 'validate').mockReturnValueOnce(new Error())
+    vi.spyOn(validationStubs[1], 'validate').mockReturnValueOnce(
+      new NoProvidedParamError('field'),
+    )
+    const error = sut.validate({ anyField: 'any_value' })
+    expect(error).toEqual(new Error())
+  })
+
   it('should not return if all validations succeed', () => {
     const { sut } = makeSUT()
     const error = sut.validate({ anyField: 'any_value' })
