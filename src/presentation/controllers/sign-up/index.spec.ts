@@ -1,4 +1,4 @@
-import { describe, expect, it, vitest } from 'vitest'
+import { describe, expect, it, vi, vitest } from 'vitest'
 
 import { SignUpController } from '.'
 
@@ -241,5 +241,16 @@ describe('SignUp Controller', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  it('should return 400 if Validation returns an error', async () => {
+    const { sut, validationStub } = makeSUT()
+    vi.spyOn(validationStub, 'validate').mockReturnValueOnce(
+      new NoProvidedParamError('any_field'),
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(
+      badRequest(new NoProvidedParamError('any_field')),
+    )
   })
 })
