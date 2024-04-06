@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import {
+  CompareFieldsValidation,
   IValidation,
   RequiredFieldValidation,
   ValidationComposite,
@@ -15,9 +16,15 @@ describe('SignUpValidation Factory', () => {
     makeSignUpValidation()
 
     const validations: IValidation[] = []
+
     for (const field of ['name', 'email', 'password', 'passwordConfirmation']) {
       validations.push(new RequiredFieldValidation(field))
     }
+
+    validations.push(
+      new CompareFieldsValidation('passwordConfirmation', 'password'),
+    )
+
     expect(ValidationComposite).toHaveBeenCalledWith(validations)
   })
 })
