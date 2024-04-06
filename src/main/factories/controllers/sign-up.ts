@@ -8,7 +8,8 @@ import {
 } from '@/infra/db/mongodb/repositories'
 import { IController } from '@/presentation/protocols'
 
-import { ControllerLogDecorator } from '../decorators'
+import { ControllerLogDecorator } from '../../decorators'
+import { makeSignUpValidation } from '../validations'
 
 export const makeSignUpController = (): IController => {
   const encrypter = new BcryptAdapter(12)
@@ -20,6 +21,7 @@ export const makeSignUpController = (): IController => {
   const signUpController = new SignUpController(
     emailValidator,
     addAccountUseCase,
+    makeSignUpValidation(),
   )
 
   const logMongoRepository = new LogMongoRepository()

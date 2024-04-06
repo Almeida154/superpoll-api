@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     coverage: {
       provider: 'istanbul',
-      include: ['**/*.ts', '!**/src/main/**'],
+      include: ['**/*.ts'],
     },
     alias: {
       '@': path.resolve(__dirname, 'src'),
