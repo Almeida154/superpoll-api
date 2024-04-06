@@ -5,29 +5,13 @@ import { SignUpController } from '.'
 import {
   NoProvidedParamError,
   InternalServerError,
-  InvalidParamError,
 } from '@/presentation/errors'
 
 import { ok, internalException, badRequest } from '@/presentation/helpers/http'
 
-import {
-  IEmailValidator,
-  AccountModel,
-  IAddAccountUseCase,
-  IHttpRequest,
-} from './protocols'
+import { AccountModel, IAddAccountUseCase, IHttpRequest } from './protocols'
 
 import { IValidation } from '@/presentation/helpers/validators'
-
-const makeEmailValidator = (): IEmailValidator => {
-  class EmailValidatorStub implements IEmailValidator {
-    isValid(): boolean {
-      return true
-    }
-  }
-
-  return new EmailValidatorStub()
-}
 
 const makeAddAccountUseCase = (): IAddAccountUseCase => {
   class AddAccountStub implements IAddAccountUseCase {
@@ -66,44 +50,20 @@ const makeFakeRequest = (): IHttpRequest => ({
 })
 
 interface ISut {
-  emailValidatorStub: IEmailValidator
   addAccountUseCaseStub: IAddAccountUseCase
   validationStub: IValidation
   sut: SignUpController
 }
 
 const makeSUT = (): ISut => {
-  const emailValidatorStub = makeEmailValidator()
   const addAccountUseCaseStub = makeAddAccountUseCase()
   const validationStub = makeValidation()
-  const sut = new SignUpController(
-    emailValidatorStub,
-    addAccountUseCaseStub,
-    validationStub,
-  )
+  const sut = new SignUpController(addAccountUseCaseStub, validationStub)
 
-  return { emailValidatorStub, addAccountUseCaseStub, validationStub, sut }
+  return { addAccountUseCaseStub, validationStub, sut }
 }
 
 describe('SignUp Controller', () => {
-  it('should return 400 if an invalid email was provided', async () => {
-    const { sut, emailValidatorStub } = makeSUT()
-
-    vitest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false)
-
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(badRequest(new InvalidParamError('email')))
-  })
-
-  it('should call EmailValidator with correct email', async () => {
-    const { sut, emailValidatorStub } = makeSUT()
-
-    const isValidSpy = vitest.spyOn(emailValidatorStub, 'isValid')
-
-    await sut.handle(makeFakeRequest())
-    expect(isValidSpy).toHaveBeenCalledWith('any@mail.com')
-  })
-
   it('should call AddAccountUseCase with correct values', async () => {
     const { sut, addAccountUseCaseStub } = makeSUT()
 
@@ -116,19 +76,6 @@ describe('SignUp Controller', () => {
       email: 'any@mail.com',
       password: 'any_password',
     })
-  })
-
-  it('should return 500 if EmailValidator throws', async () => {
-    const { sut, emailValidatorStub } = makeSUT()
-
-    vitest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
-      throw new Error()
-    })
-
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(
-      internalException(new InternalServerError(null)),
-    )
   })
 
   it('should return 500 if AddAccountUseCase throws', async () => {

@@ -1,6 +1,5 @@
 import { SignUpController } from '@/presentation/controllers/sign-up'
 import { AddAccountUseCase } from '@/data/usecases'
-import { EmailValidatorAdapter } from '@/utils/email-validator/validator'
 import { BcryptAdapter } from '@/infra/cryptography/bcrypt'
 import {
   AccountMongoRepository,
@@ -16,10 +15,7 @@ export const makeSignUpController = (): IController => {
   const accountRepository = new AccountMongoRepository()
   const addAccountUseCase = new AddAccountUseCase(accountRepository, encrypter)
 
-  const emailValidator = new EmailValidatorAdapter()
-
   const signUpController = new SignUpController(
-    emailValidator,
     addAccountUseCase,
     makeSignUpValidation(),
   )
