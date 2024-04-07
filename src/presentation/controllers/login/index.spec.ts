@@ -66,7 +66,10 @@ describe('LoginController', () => {
     const { sut, authenticationStub } = makeSUT()
     const authSpy = vi.spyOn(authenticationStub, 'auth')
     await sut.handle(makeFakeRequest())
-    expect(authSpy).toHaveBeenCalledWith('any@email', 'any_password')
+    expect(authSpy).toHaveBeenCalledWith({
+      email: 'any@email',
+      password: 'any_password',
+    })
   })
 
   it('should return 401 if Authentication fails', async () => {

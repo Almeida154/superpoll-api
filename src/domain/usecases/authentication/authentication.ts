@@ -1,3 +1,8 @@
+export interface IAuthCredentials {
+  email: string
+  password: string
+}
+
 export interface IAuthentication {
-  auth(email: string, password: string): Promise<string>
+  auth(credentials: IAuthCredentials): Promise<string>
 }
