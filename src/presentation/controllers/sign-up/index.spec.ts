@@ -7,7 +7,11 @@ import {
   InternalServerError,
 } from '@/presentation/errors'
 
-import { ok, internalException, badRequest } from '@/presentation/helpers/http'
+import {
+  ok,
+  internalException,
+  badRequest,
+} from '@/presentation/helpers/http/http'
 
 import { AccountModel, IAddAccountUseCase, IHttpRequest } from './protocols'
 

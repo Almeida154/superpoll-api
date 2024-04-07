@@ -5,7 +5,11 @@ import {
   IAddAccountUseCase,
 } from './protocols'
 
-import { badRequest, internalException, ok } from '@/presentation/helpers/http'
+import {
+  badRequest,
+  internalException,
+  ok,
+} from '@/presentation/helpers/http/http'
 import { IValidation } from '@/presentation/helpers/validators'
 
 export class SignUpController implements IController {

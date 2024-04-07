@@ -7,7 +7,7 @@ import {
   internalException,
   ok,
   unauthorized,
-} from '@/presentation/helpers/http'
+} from '@/presentation/helpers/http/http'
 
 import { NoProvidedParamError } from '@/presentation/errors'
 import { IAuthentication } from '@/domain/usecases'
