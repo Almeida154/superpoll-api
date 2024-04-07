@@ -1,6 +1,6 @@
 import { IAuthentication } from '@/domain/usecases'
 
-import { InvalidParamError, NoProvidedParamError } from '@/presentation/errors'
+import { IValidation } from '@/presentation/helpers/validators'
 
 import {
   badRequest,
@@ -11,40 +11,27 @@ import {
 
 import {
   IController,
-  IEmailValidator,
   IHttpRequest,
   IHttpResponse,
 } from '@/presentation/protocols'
 
 export class LoginController implements IController {
-  private readonly emailValidator: IEmailValidator
   private readonly authentication: IAuthentication
+  private readonly validation: IValidation
 
-  constructor(
-    emailValidator: IEmailValidator,
-    authentication: IAuthentication,
-  ) {
-    this.emailValidator = emailValidator
+  constructor(authentication: IAuthentication, validation: IValidation) {
     this.authentication = authentication
+    this.validation = validation
   }
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
-      const requiredFields = ['email', 'password']
-
-      for (const field of requiredFields) {
-        if (!httpRequest.body[field])
-          return badRequest(new NoProvidedParamError(field))
-      }
+      const error = this.validation.validate(httpRequest.body)
+      if (error) return badRequest(error)
 
       const { email, password } = httpRequest.body
 
-      const isEmailValid = this.emailValidator.isValid(email)
-
-      if (!isEmailValid) return badRequest(new InvalidParamError('email'))
-
       const accessToken = await this.authentication.auth(email, password)
-
       if (!accessToken) return unauthorized()
 
       return ok({ accessToken })
