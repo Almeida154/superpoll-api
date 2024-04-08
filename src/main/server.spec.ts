@@ -43,7 +43,7 @@ describe('Server', () => {
       .mockImplementationOnce(
         () => new Promise((_resolve, reject) => reject(new Error())),
       )
-    await import('./server')
-    expect(connectSpy).rejects.toThrow()
+    import('./server')
+    await expect(connectSpy).rejects.toThrow()
   })
 })
