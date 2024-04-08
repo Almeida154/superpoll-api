@@ -57,7 +57,7 @@ const makeSUT = (): ISut => {
   }
 }
 
-describe('IAddAccountUseCase', () => {
+describe('AddAccountUseCase', () => {
   it('should call Encrypter with correct password', async () => {
     const { sut, encrypterStub } = makeSUT()
     const encryptSpy = vitest.spyOn(encrypterStub, 'encrypt')

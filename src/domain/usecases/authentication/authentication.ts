@@ -3,6 +3,6 @@ export interface IAuthCredentials {
   password: string
 }
 
-export interface IAuthentication {
-  auth(credentials: IAuthCredentials): Promise<string>
+export interface IAuthenticationUseCase {
+  execute(credentials: IAuthCredentials): Promise<string>
 }

@@ -10,7 +10,7 @@ import {
 } from '@/presentation/helpers/http/http'
 
 import { NoProvidedParamError } from '@/presentation/errors'
-import { IAuthentication } from '@/domain/usecases'
+import { IAuthenticationUseCase } from '@/domain/usecases'
 import { IValidation } from '@/presentation/helpers/validators'
 
 import { LoginController } from '.'
@@ -22,9 +22,9 @@ const makeFakeRequest = (): IHttpRequest => ({
   },
 })
 
-const makeAuthentication = (): IAuthentication => {
-  class AuthenticationStub implements IAuthentication {
-    async auth(): Promise<string> {
+const makeAuthentication = (): IAuthenticationUseCase => {
+  class AuthenticationStub implements IAuthenticationUseCase {
+    async execute(): Promise<string> {
       return new Promise((resolve) => resolve('any_token'))
     }
   }
@@ -44,7 +44,7 @@ const makeValidation = (): IValidation => {
 
 interface ISut {
   sut: LoginController
-  authenticationStub: IAuthentication
+  authenticationStub: IAuthenticationUseCase
   validationStub: IValidation
 }
 
@@ -64,7 +64,7 @@ const makeSUT = (): ISut => {
 describe('LoginController', () => {
   it('should call Authentication with correct values', async () => {
     const { sut, authenticationStub } = makeSUT()
-    const authSpy = vi.spyOn(authenticationStub, 'auth')
+    const authSpy = vi.spyOn(authenticationStub, 'execute')
     await sut.handle(makeFakeRequest())
     expect(authSpy).toHaveBeenCalledWith({
       email: 'any@email',
@@ -74,7 +74,7 @@ describe('LoginController', () => {
 
   it('should return 401 if Authentication fails', async () => {
     const { sut, authenticationStub } = makeSUT()
-    vi.spyOn(authenticationStub, 'auth').mockReturnValueOnce(
+    vi.spyOn(authenticationStub, 'execute').mockReturnValueOnce(
       new Promise((resolve) => resolve(null)),
     )
     const httpResponse = await sut.handle(makeFakeRequest())
@@ -83,7 +83,7 @@ describe('LoginController', () => {
 
   it('should return 500 if Authentication throws', async () => {
     const { sut, authenticationStub } = makeSUT()
-    vi.spyOn(authenticationStub, 'auth').mockReturnValueOnce(
+    vi.spyOn(authenticationStub, 'execute').mockReturnValueOnce(
       new Promise((resolve, reject) => reject(new Error())),
     )
     const httpResponse = await sut.handle(makeFakeRequest())

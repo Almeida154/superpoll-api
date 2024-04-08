@@ -1,4 +1,4 @@
-import { IAuthentication } from '@/domain/usecases'
+import { IAuthenticationUseCase } from '@/domain/usecases'
 
 import { IValidation } from '@/presentation/helpers/validators'
 
@@ -16,10 +16,10 @@ import {
 } from '@/presentation/protocols'
 
 export class LoginController implements IController {
-  private readonly authentication: IAuthentication
+  private readonly authentication: IAuthenticationUseCase
   private readonly validation: IValidation
 
-  constructor(authentication: IAuthentication, validation: IValidation) {
+  constructor(authentication: IAuthenticationUseCase, validation: IValidation) {
     this.authentication = authentication
     this.validation = validation
   }
@@ -31,7 +31,7 @@ export class LoginController implements IController {
 
       const { email, password } = httpRequest.body
 
-      const accessToken = await this.authentication.auth({ email, password })
+      const accessToken = await this.authentication.execute({ email, password })
       if (!accessToken) return unauthorized()
 
       return ok({ accessToken })
