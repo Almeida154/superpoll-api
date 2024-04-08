@@ -59,4 +59,11 @@ describe('AuthenticationUseCase', () => {
     const tokenPromise = sut.execute(makeFakeAuthenticationCredentials())
     expect(tokenPromise).rejects.toThrow()
   })
+
+  it('should return null if LoadAccountByEmailRepository returns null', async () => {
+    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
+    vi.spyOn(loadAccountByEmailRepositoryStub, 'load').mockReturnValueOnce(null)
+    const token = await sut.execute(makeFakeAuthenticationCredentials())
+    expect(token).toBeNull()
+  })
 })
