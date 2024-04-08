@@ -1,4 +1,4 @@
-import { IErrorLogRepository } from '@/data/protocols/error-log-repository'
+import { IErrorLogRepository } from '@/data/protocols/db/error-log-repository'
 
 import {
   IController,
