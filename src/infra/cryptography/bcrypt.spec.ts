@@ -10,7 +10,7 @@ interface ISut {
   salt: number
 }
 
-const makeSUT = (): ISut => {
+const makeSut = (): ISut => {
   const salt = 12
   const sut = new BcryptAdapter(salt)
 
@@ -27,7 +27,7 @@ vitest.mock('bcrypt', () => ({
 
 describe('BcryptAdapter', () => {
   it('should call bcrypt with correct values', async () => {
-    const { sut, salt } = makeSUT()
+    const { sut, salt } = makeSut()
 
     const hashSpy = vitest.spyOn(bcrypt, 'hash')
     await sut.encrypt('any_value')
@@ -35,7 +35,7 @@ describe('BcryptAdapter', () => {
   })
 
   it('should throw if bcrypt throws', async () => {
-    const { sut } = makeSUT()
+    const { sut } = makeSut()
 
     vitest.spyOn(bcrypt, 'hash').mockImplementationOnce(async () => {
       return new Promise((resolve, reject) => reject(new Error()))
@@ -46,7 +46,7 @@ describe('BcryptAdapter', () => {
   })
 
   it('should return encrypted value on success', async () => {
-    const { sut } = makeSUT()
+    const { sut } = makeSut()
     const hash = await sut.encrypt('any_value')
     expect(hash).toBe('hash')
   })

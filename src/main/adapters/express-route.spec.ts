@@ -28,7 +28,7 @@ interface ISut {
   controllerStub: IController
 }
 
-const makeSUT = (): ISut => {
+const makeSut = (): ISut => {
   const controllerStub = makeController()
   const sut = adaptRoute
 
@@ -40,7 +40,7 @@ const makeSUT = (): ISut => {
 
 describe('adaptRoute', () => {
   it('should return error message if status code is not 200', async () => {
-    const { controllerStub, sut } = makeSUT()
+    const { controllerStub, sut } = makeSut()
     const error = new InvalidParamError('email')
 
     vitest
@@ -59,7 +59,7 @@ describe('adaptRoute', () => {
   })
 
   it('should return response body if status code is 200', async () => {
-    const { controllerStub, sut } = makeSUT()
+    const { controllerStub, sut } = makeSut()
     const res = makeFakeExpressResponse()
     const adaptedRoute = sut(controllerStub)
     await adaptedRoute(makeFakeExpressRequest(), res)

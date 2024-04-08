@@ -48,7 +48,7 @@ interface ISut {
   validationStub: IValidation
 }
 
-const makeSUT = (): ISut => {
+const makeSut = (): ISut => {
   const authenticationStub = makeAuthentication()
   const validationStub = makeValidation()
 
@@ -63,7 +63,7 @@ const makeSUT = (): ISut => {
 
 describe('LoginController', () => {
   it('should call Authentication with correct values', async () => {
-    const { sut, authenticationStub } = makeSUT()
+    const { sut, authenticationStub } = makeSut()
     const authSpy = vi.spyOn(authenticationStub, 'execute')
     await sut.handle(makeFakeRequest())
     expect(authSpy).toHaveBeenCalledWith({
@@ -73,7 +73,7 @@ describe('LoginController', () => {
   })
 
   it('should return 401 if Authentication fails', async () => {
-    const { sut, authenticationStub } = makeSUT()
+    const { sut, authenticationStub } = makeSut()
     vi.spyOn(authenticationStub, 'execute').mockReturnValueOnce(
       new Promise((resolve) => resolve(null)),
     )
@@ -82,7 +82,7 @@ describe('LoginController', () => {
   })
 
   it('should return 500 if Authentication throws', async () => {
-    const { sut, authenticationStub } = makeSUT()
+    const { sut, authenticationStub } = makeSut()
     vi.spyOn(authenticationStub, 'execute').mockReturnValueOnce(
       new Promise((resolve, reject) => reject(new Error())),
     )
@@ -91,13 +91,13 @@ describe('LoginController', () => {
   })
 
   it('should return 200 if valid credentials are provided', async () => {
-    const { sut } = makeSUT()
+    const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok({ accessToken: 'any_token' }))
   })
 
   it('should call Validation with correct value', async () => {
-    const { sut, validationStub } = makeSUT()
+    const { sut, validationStub } = makeSut()
     const validateSpy = vi.spyOn(validationStub, 'validate')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
@@ -105,7 +105,7 @@ describe('LoginController', () => {
   })
 
   it('should return 400 if Validation returns an error', async () => {
-    const { sut, validationStub } = makeSUT()
+    const { sut, validationStub } = makeSut()
     vi.spyOn(validationStub, 'validate').mockReturnValueOnce(
       new NoProvidedParamError('any_field'),
     )

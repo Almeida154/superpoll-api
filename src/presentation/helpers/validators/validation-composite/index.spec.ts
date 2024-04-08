@@ -19,7 +19,7 @@ interface ISut {
   validationStubs: IValidation[]
 }
 
-const makeSUT = (): ISut => {
+const makeSut = (): ISut => {
   const validationStubs = [makeValidation(), makeValidation()]
   const sut = new ValidationComposite(validationStubs)
 
@@ -31,7 +31,7 @@ const makeSUT = (): ISut => {
 
 describe('ValidationComposite', () => {
   it('should return an error if any validation fails', () => {
-    const { sut, validationStubs } = makeSUT()
+    const { sut, validationStubs } = makeSut()
     vi.spyOn(validationStubs[0], 'validate').mockReturnValueOnce(
       new NoProvidedParamError('field'),
     )
@@ -40,7 +40,7 @@ describe('ValidationComposite', () => {
   })
 
   it('should return the first error if more than one validation fails', () => {
-    const { sut, validationStubs } = makeSUT()
+    const { sut, validationStubs } = makeSut()
     vi.spyOn(validationStubs[0], 'validate').mockReturnValueOnce(new Error())
     vi.spyOn(validationStubs[1], 'validate').mockReturnValueOnce(
       new NoProvidedParamError('field'),
@@ -50,7 +50,7 @@ describe('ValidationComposite', () => {
   })
 
   it('should not return if all validations succeed', () => {
-    const { sut } = makeSUT()
+    const { sut } = makeSut()
     const error = sut.validate({ anyField: 'any_value' })
     expect(error).toBeFalsy()
   })

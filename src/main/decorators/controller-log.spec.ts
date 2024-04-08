@@ -59,7 +59,7 @@ interface ISut {
   errorLogRepositoryStub: IErrorLogRepository
 }
 
-const makeSUT = (): ISut => {
+const makeSut = (): ISut => {
   const controllerStub = makeController()
   const errorLogRepositoryStub = makeLogRepository()
   const sut = new ControllerLogDecorator(controllerStub, errorLogRepositoryStub)
@@ -73,7 +73,7 @@ const makeSUT = (): ISut => {
 
 describe('ControllerLog Decorator', () => {
   it('should call controller handle', async () => {
-    const { sut, controllerStub } = makeSUT()
+    const { sut, controllerStub } = makeSut()
 
     const handleSpy = vi.spyOn(controllerStub, 'handle')
 
@@ -82,14 +82,14 @@ describe('ControllerLog Decorator', () => {
   })
 
   it('should return the same result of the controller', async () => {
-    const { sut } = makeSUT()
+    const { sut } = makeSut()
 
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok(makeFakeAccount()))
   })
 
   it('should call ErrorLogRepository with correct error if controller returns a server error', async () => {
-    const { sut, controllerStub, errorLogRepositoryStub } = makeSUT()
+    const { sut, controllerStub, errorLogRepositoryStub } = makeSut()
 
     vi.spyOn(controllerStub, 'handle').mockReturnValueOnce(
       new Promise((resolve) => resolve(makeFakeServerError())),

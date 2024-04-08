@@ -59,7 +59,7 @@ interface ISut {
   sut: SignUpController
 }
 
-const makeSUT = (): ISut => {
+const makeSut = (): ISut => {
   const addAccountUseCaseStub = makeAddAccountUseCase()
   const validationStub = makeValidation()
   const sut = new SignUpController(addAccountUseCaseStub, validationStub)
@@ -69,7 +69,7 @@ const makeSUT = (): ISut => {
 
 describe('SignUp Controller', () => {
   it('should call AddAccountUseCase with correct values', async () => {
-    const { sut, addAccountUseCaseStub } = makeSUT()
+    const { sut, addAccountUseCaseStub } = makeSut()
 
     const addSpy = vitest.spyOn(addAccountUseCaseStub, 'execute')
 
@@ -83,7 +83,7 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 500 if AddAccountUseCase throws', async () => {
-    const { sut, addAccountUseCaseStub } = makeSUT()
+    const { sut, addAccountUseCaseStub } = makeSut()
 
     vitest
       .spyOn(addAccountUseCaseStub, 'execute')
@@ -98,14 +98,14 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 200 if valid data is provided', async () => {
-    const { sut } = makeSUT()
+    const { sut } = makeSut()
 
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok(makeFakeAccount()))
   })
 
   it('should call Validation with correct value', async () => {
-    const { sut, validationStub } = makeSUT()
+    const { sut, validationStub } = makeSut()
     const validateSpy = vitest.spyOn(validationStub, 'validate')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
@@ -113,7 +113,7 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 400 if Validation returns an error', async () => {
-    const { sut, validationStub } = makeSUT()
+    const { sut, validationStub } = makeSut()
     vi.spyOn(validationStub, 'validate').mockReturnValueOnce(
       new NoProvidedParamError('any_field'),
     )

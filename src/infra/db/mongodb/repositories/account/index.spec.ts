@@ -3,7 +3,7 @@ import { MongoClient } from '@/infra/db/mongodb/helpers/mongo-client'
 
 import { AccountMongoRepository } from '.'
 
-const makeSUT = () => {
+const makeSut = () => {
   return new AccountMongoRepository()
 }
 
@@ -22,7 +22,7 @@ describe('AccountMongoRepository', () => {
   })
 
   it('should return an account on success', async () => {
-    const sut = makeSUT()
+    const sut = makeSut()
 
     const account = await sut.add({
       name: 'any_name',
