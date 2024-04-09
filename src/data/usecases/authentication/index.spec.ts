@@ -114,8 +114,8 @@ describe('AuthenticationUseCase', () => {
     vi.spyOn(hashComparerStub, 'compare').mockReturnValueOnce(
       new Promise((resolve, reject) => reject(new Error())),
     )
-    const comparisonPromise = sut.execute(makeFakeAuthenticationCredentials())
-    expect(comparisonPromise).rejects.toThrow()
+    const tokenPromise = sut.execute(makeFakeAuthenticationCredentials())
+    expect(tokenPromise).rejects.toThrow()
   })
 
   it('should return null if HashComparer returns false', async () => {
@@ -132,5 +132,14 @@ describe('AuthenticationUseCase', () => {
     const generateSpy = vi.spyOn(tokenGeneratorStub, 'generate')
     await sut.execute(makeFakeAuthenticationCredentials())
     expect(generateSpy).toHaveBeenCalledWith('any_id')
+  })
+
+  it('should throw if TokenGenerator throws', async () => {
+    const { sut, tokenGeneratorStub } = makeSut()
+    vi.spyOn(tokenGeneratorStub, 'generate').mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error())),
+    )
+    const tokenPromise = sut.execute(makeFakeAuthenticationCredentials())
+    expect(tokenPromise).rejects.toThrow()
   })
 })
