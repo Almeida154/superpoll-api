@@ -1,12 +1,16 @@
 import { describe, expect, it, vi } from 'vitest'
-import { AccountModel } from '@/domain/models'
+
 import {
   IHashComparer,
   ILoadAccountByEmailRepository,
   ITokenGenerator,
+  IUpdateAccessTokenRepository,
 } from '@/data/protocols'
-import { AuthenticationUseCase } from '.'
+
+import { AccountModel } from '@/domain/models'
 import { IAuthCredentials } from '@/domain/usecases'
+
+import { AuthenticationUseCase } from '.'
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'any_id',
@@ -32,6 +36,16 @@ const makeLoadAccountByEmailRepository = (): ILoadAccountByEmailRepository => {
   return new LoadAccountByEmailRepositoryStub()
 }
 
+const makeUpdateAccessTokenRepository = (): IUpdateAccessTokenRepository => {
+  class UpdateAccessTokenRepository implements IUpdateAccessTokenRepository {
+    async update(): Promise<void> {
+      return new Promise((resolve) => resolve())
+    }
+  }
+
+  return new UpdateAccessTokenRepository()
+}
+
 const makeHashComparer = (): IHashComparer => {
   class HashComparerStub implements IHashComparer {
     async compare(): Promise<boolean> {
@@ -55,17 +69,20 @@ const makeTokenGenerator = (): ITokenGenerator => {
 interface ISut {
   sut: AuthenticationUseCase
   loadAccountByEmailRepositoryStub: ILoadAccountByEmailRepository
+  updateAccessTokenRepositoryStub: IUpdateAccessTokenRepository
   hashComparerStub: IHashComparer
   tokenGeneratorStub: ITokenGenerator
 }
 
 const makeSut = (): ISut => {
   const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository()
+  const updateAccessTokenRepositoryStub = makeUpdateAccessTokenRepository()
   const hashComparerStub = makeHashComparer()
   const tokenGeneratorStub = makeTokenGenerator()
 
   const sut = new AuthenticationUseCase(
     loadAccountByEmailRepositoryStub,
+    updateAccessTokenRepositoryStub,
     hashComparerStub,
     tokenGeneratorStub,
   )
@@ -73,6 +90,7 @@ const makeSut = (): ISut => {
   return {
     sut,
     loadAccountByEmailRepositoryStub,
+    updateAccessTokenRepositoryStub,
     hashComparerStub,
     tokenGeneratorStub,
   }
@@ -98,8 +116,8 @@ describe('AuthenticationUseCase', () => {
   it('should return null if LoadAccountByEmailRepository returns null', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
     vi.spyOn(loadAccountByEmailRepositoryStub, 'load').mockReturnValueOnce(null)
-    const token = await sut.execute(makeFakeAuthenticationCredentials())
-    expect(token).toBeNull()
+    const accessToken = await sut.execute(makeFakeAuthenticationCredentials())
+    expect(accessToken).toBeNull()
   })
 
   it('should call HashComparer with correct values', async () => {
@@ -123,8 +141,8 @@ describe('AuthenticationUseCase', () => {
     vi.spyOn(hashComparerStub, 'compare').mockReturnValueOnce(
       new Promise((resolve) => resolve(false)),
     )
-    const token = await sut.execute(makeFakeAuthenticationCredentials())
-    expect(token).toBeNull()
+    const accessToken = await sut.execute(makeFakeAuthenticationCredentials())
+    expect(accessToken).toBeNull()
   })
 
   it('should call TokenGenerator with correct id', async () => {
@@ -141,5 +159,18 @@ describe('AuthenticationUseCase', () => {
     )
     const tokenPromise = sut.execute(makeFakeAuthenticationCredentials())
     expect(tokenPromise).rejects.toThrow()
+  })
+
+  it('should return a access token on success', async () => {
+    const { sut } = makeSut()
+    const accessToken = await sut.execute(makeFakeAuthenticationCredentials())
+    expect(accessToken).toBe('any_token')
+  })
+
+  it('should call UpdateAccessTokenRepository with correct values', async () => {
+    const { sut, updateAccessTokenRepositoryStub } = makeSut()
+    const updateSpy = vi.spyOn(updateAccessTokenRepositoryStub, 'update')
+    await sut.execute(makeFakeAuthenticationCredentials())
+    expect(updateSpy).toHaveBeenCalledWith('any_id', 'any_token')
   })
 })
