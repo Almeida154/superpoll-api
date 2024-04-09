@@ -109,8 +109,8 @@ describe('AuthenticationUseCase', () => {
     vi.spyOn(loadAccountByEmailRepositoryStub, 'load').mockReturnValueOnce(
       new Promise((resolve, reject) => reject(new Error())),
     )
-    const tokenPromise = sut.execute(makeFakeAuthenticationCredentials())
-    expect(tokenPromise).rejects.toThrow()
+    const accessTokenPromise = sut.execute(makeFakeAuthenticationCredentials())
+    expect(accessTokenPromise).rejects.toThrow()
   })
 
   it('should return null if LoadAccountByEmailRepository returns null', async () => {
@@ -132,8 +132,8 @@ describe('AuthenticationUseCase', () => {
     vi.spyOn(hashComparerStub, 'compare').mockReturnValueOnce(
       new Promise((resolve, reject) => reject(new Error())),
     )
-    const tokenPromise = sut.execute(makeFakeAuthenticationCredentials())
-    expect(tokenPromise).rejects.toThrow()
+    const accessTokenPromise = sut.execute(makeFakeAuthenticationCredentials())
+    expect(accessTokenPromise).rejects.toThrow()
   })
 
   it('should return null if HashComparer returns false', async () => {
@@ -157,8 +157,8 @@ describe('AuthenticationUseCase', () => {
     vi.spyOn(tokenGeneratorStub, 'generate').mockReturnValueOnce(
       new Promise((resolve, reject) => reject(new Error())),
     )
-    const tokenPromise = sut.execute(makeFakeAuthenticationCredentials())
-    expect(tokenPromise).rejects.toThrow()
+    const accessTokenPromise = sut.execute(makeFakeAuthenticationCredentials())
+    expect(accessTokenPromise).rejects.toThrow()
   })
 
   it('should return a access token on success', async () => {
@@ -172,5 +172,14 @@ describe('AuthenticationUseCase', () => {
     const updateSpy = vi.spyOn(updateAccessTokenRepositoryStub, 'update')
     await sut.execute(makeFakeAuthenticationCredentials())
     expect(updateSpy).toHaveBeenCalledWith('any_id', 'any_token')
+  })
+
+  it('should throw if UpdateAccessTokenRepository throws', async () => {
+    const { sut, updateAccessTokenRepositoryStub } = makeSut()
+    vi.spyOn(updateAccessTokenRepositoryStub, 'update').mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error())),
+    )
+    const accessTokenPromise = sut.execute(makeFakeAuthenticationCredentials())
+    expect(accessTokenPromise).rejects.toThrow()
   })
 })
