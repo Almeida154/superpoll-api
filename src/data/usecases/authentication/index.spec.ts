@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 import { AccountModel } from '@/domain/models'
-import { IHashComparer, ILoadAccountByEmailRepository } from '@/data/protocols'
+import {
+  IHashComparer,
+  ILoadAccountByEmailRepository,
+  ITokenGenerator,
+} from '@/data/protocols'
 import { AuthenticationUseCase } from '.'
 import { IAuthCredentials } from '@/domain/usecases'
 
@@ -38,24 +42,39 @@ const makeHashComparer = (): IHashComparer => {
   return new HashComparerStub()
 }
 
+const makeTokenGenerator = (): ITokenGenerator => {
+  class TokenGeneratorStub implements ITokenGenerator {
+    async generate(): Promise<string> {
+      return new Promise((resolve) => resolve('any_token'))
+    }
+  }
+
+  return new TokenGeneratorStub()
+}
+
 interface ISut {
   sut: AuthenticationUseCase
   loadAccountByEmailRepositoryStub: ILoadAccountByEmailRepository
   hashComparerStub: IHashComparer
+  tokenGeneratorStub: ITokenGenerator
 }
 
 const makeSut = (): ISut => {
   const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository()
   const hashComparerStub = makeHashComparer()
+  const tokenGeneratorStub = makeTokenGenerator()
+
   const sut = new AuthenticationUseCase(
     loadAccountByEmailRepositoryStub,
     hashComparerStub,
+    tokenGeneratorStub,
   )
 
   return {
     sut,
     loadAccountByEmailRepositoryStub,
     hashComparerStub,
+    tokenGeneratorStub,
   }
 }
 
@@ -106,5 +125,12 @@ describe('AuthenticationUseCase', () => {
     )
     const token = await sut.execute(makeFakeAuthenticationCredentials())
     expect(token).toBeNull()
+  })
+
+  it('should call TokenGenerator with correct id', async () => {
+    const { sut, tokenGeneratorStub } = makeSut()
+    const generateSpy = vi.spyOn(tokenGeneratorStub, 'generate')
+    await sut.execute(makeFakeAuthenticationCredentials())
+    expect(generateSpy).toHaveBeenCalledWith('any_id')
   })
 })
