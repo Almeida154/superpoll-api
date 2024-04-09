@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import {
   IHashComparer,
   ILoadAccountByEmailRepository,
-  ITokenGenerator,
+  IEncrypter,
   IUpdateAccessTokenRepository,
 } from '@/data/protocols'
 
@@ -56,14 +56,14 @@ const makeHashComparer = (): IHashComparer => {
   return new HashComparerStub()
 }
 
-const makeTokenGenerator = (): ITokenGenerator => {
-  class TokenGeneratorStub implements ITokenGenerator {
-    async generate(): Promise<string> {
+const makeEncrypter = (): IEncrypter => {
+  class EncrypterStub implements IEncrypter {
+    async encrypt(): Promise<string> {
       return new Promise((resolve) => resolve('any_token'))
     }
   }
 
-  return new TokenGeneratorStub()
+  return new EncrypterStub()
 }
 
 interface ISut {
@@ -71,14 +71,14 @@ interface ISut {
   loadAccountByEmailRepositoryStub: ILoadAccountByEmailRepository
   updateAccessTokenRepositoryStub: IUpdateAccessTokenRepository
   hashComparerStub: IHashComparer
-  tokenGeneratorStub: ITokenGenerator
+  tokenGeneratorStub: IEncrypter
 }
 
 const makeSut = (): ISut => {
   const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository()
   const updateAccessTokenRepositoryStub = makeUpdateAccessTokenRepository()
   const hashComparerStub = makeHashComparer()
-  const tokenGeneratorStub = makeTokenGenerator()
+  const tokenGeneratorStub = makeEncrypter()
 
   const sut = new AuthenticationUseCase(
     loadAccountByEmailRepositoryStub,
@@ -147,14 +147,14 @@ describe('AuthenticationUseCase', () => {
 
   it('should call TokenGenerator with correct id', async () => {
     const { sut, tokenGeneratorStub } = makeSut()
-    const generateSpy = vi.spyOn(tokenGeneratorStub, 'generate')
+    const generateSpy = vi.spyOn(tokenGeneratorStub, 'encrypt')
     await sut.execute(makeFakeAuthenticationCredentials())
     expect(generateSpy).toHaveBeenCalledWith('any_id')
   })
 
   it('should throw if TokenGenerator throws', async () => {
     const { sut, tokenGeneratorStub } = makeSut()
-    vi.spyOn(tokenGeneratorStub, 'generate').mockReturnValueOnce(
+    vi.spyOn(tokenGeneratorStub, 'encrypt').mockReturnValueOnce(
       new Promise((resolve, reject) => reject(new Error())),
     )
     const accessTokenPromise = sut.execute(makeFakeAuthenticationCredentials())

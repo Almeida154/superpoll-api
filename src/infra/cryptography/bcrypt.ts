@@ -1,15 +1,15 @@
 import bcrypt from 'bcrypt'
 
-import { IEncrypter } from '@/data/protocols'
+import { IHashMaker } from '@/data/protocols'
 
-export class BcryptAdapter implements IEncrypter {
+export class BcryptAdapter implements IHashMaker {
   private readonly salt: number
 
   constructor(salt: number) {
     this.salt = salt
   }
 
-  async encrypt(value: string): Promise<string> {
+  async hash(value: string): Promise<string> {
     return await bcrypt.hash(value, this.salt)
   }
 }

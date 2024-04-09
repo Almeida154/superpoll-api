@@ -1,7 +1,7 @@
 import {
   IHashComparer,
   ILoadAccountByEmailRepository,
-  ITokenGenerator,
+  IEncrypter,
   IUpdateAccessTokenRepository,
 } from '@/data/protocols'
 
@@ -11,13 +11,13 @@ export class AuthenticationUseCase implements IAuthenticationUseCase {
   private readonly loadAccountByEmailRepository: ILoadAccountByEmailRepository
   private readonly updateAccessTokenRepository: IUpdateAccessTokenRepository
   private readonly hashComparer: IHashComparer
-  private readonly tokenGenerator: ITokenGenerator
+  private readonly tokenGenerator: IEncrypter
 
   constructor(
     loadAccountByEmailRepository: ILoadAccountByEmailRepository,
     updateAccessTokenRepository: IUpdateAccessTokenRepository,
     hashComparer: IHashComparer,
-    tokenGenerator: ITokenGenerator,
+    tokenGenerator: IEncrypter,
   ) {
     this.loadAccountByEmailRepository = loadAccountByEmailRepository
     this.updateAccessTokenRepository = updateAccessTokenRepository
@@ -37,7 +37,7 @@ export class AuthenticationUseCase implements IAuthenticationUseCase {
     )
     if (!isPasswordValid) return null
 
-    const accessToken = await this.tokenGenerator.generate(account.id)
+    const accessToken = await this.tokenGenerator.encrypt(account.id)
 
     await this.updateAccessTokenRepository.update(account.id, accessToken)
 

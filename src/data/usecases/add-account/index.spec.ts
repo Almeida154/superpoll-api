@@ -2,18 +2,18 @@ import { describe, expect, it, vitest } from 'vitest'
 
 import { AccountModel } from '@/domain/models'
 import { IAddAccountModel, IAddAccountUseCase } from '@/domain/usecases'
-import { IEncrypter, IAddAccountRepository } from '@/data/protocols'
+import { IHashMaker, IAddAccountRepository } from '@/data/protocols'
 
 import { AddAccountUseCase } from '.'
 
-const makeEncrypter = (): IEncrypter => {
-  class EncrypterStub implements IEncrypter {
-    async encrypt(): Promise<string> {
+const makeHashMaker = (): IHashMaker => {
+  class HashMakerStub implements IHashMaker {
+    async hash(): Promise<string> {
       return new Promise((resolve) => resolve('hashed_password'))
     }
   }
 
-  return new EncrypterStub()
+  return new HashMakerStub()
 }
 
 const makeAddAccountRepository = (): IAddAccountRepository => {
@@ -41,12 +41,12 @@ const makeFakeAddAccountData = (): IAddAccountModel => ({
 
 interface ISut {
   sut: IAddAccountUseCase
-  encrypterStub: IEncrypter
+  encrypterStub: IHashMaker
   addAccountRepositoryStub: IAddAccountRepository
 }
 
 const makeSut = (): ISut => {
-  const encrypterStub = makeEncrypter()
+  const encrypterStub = makeHashMaker()
   const addAccountRepositoryStub = makeAddAccountRepository()
   const sut = new AddAccountUseCase(addAccountRepositoryStub, encrypterStub)
 
@@ -60,7 +60,7 @@ const makeSut = (): ISut => {
 describe('AddAccountUseCase', () => {
   it('should call Encrypter with correct password', async () => {
     const { sut, encrypterStub } = makeSut()
-    const encryptSpy = vitest.spyOn(encrypterStub, 'encrypt')
+    const encryptSpy = vitest.spyOn(encrypterStub, 'hash')
 
     await sut.execute(makeFakeAddAccountData())
     expect(encryptSpy).toHaveBeenCalledWith('valid_password')
@@ -70,7 +70,7 @@ describe('AddAccountUseCase', () => {
     const { sut, encrypterStub } = makeSut()
 
     vitest
-      .spyOn(encrypterStub, 'encrypt')
+      .spyOn(encrypterStub, 'hash')
       .mockReturnValueOnce(
         new Promise((resolve, reject) => reject(new Error())),
       )

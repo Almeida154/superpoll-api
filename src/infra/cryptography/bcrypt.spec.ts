@@ -3,10 +3,10 @@ import bcrypt from 'bcrypt'
 
 import { BcryptAdapter } from './bcrypt'
 
-import { IEncrypter } from '@/data/protocols'
+import { IHashMaker } from '@/data/protocols'
 
 interface ISut {
-  sut: IEncrypter
+  sut: IHashMaker
   salt: number
 }
 
@@ -30,7 +30,7 @@ describe('BcryptAdapter', () => {
     const { sut, salt } = makeSut()
 
     const hashSpy = vitest.spyOn(bcrypt, 'hash')
-    await sut.encrypt('any_value')
+    await sut.hash('any_value')
     expect(hashSpy).toHaveBeenCalledWith('any_value', salt)
   })
 
@@ -41,13 +41,13 @@ describe('BcryptAdapter', () => {
       return new Promise((resolve, reject) => reject(new Error()))
     })
 
-    const hashPromise = sut.encrypt('any_value')
+    const hashPromise = sut.hash('any_value')
     await expect(hashPromise).rejects.toThrow()
   })
 
   it('should return encrypted value on success', async () => {
     const { sut } = makeSut()
-    const hash = await sut.encrypt('any_value')
+    const hash = await sut.hash('any_value')
     expect(hash).toBe('hash')
   })
 })
