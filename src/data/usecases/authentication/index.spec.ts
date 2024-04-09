@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { AccountModel } from '@/domain/models'
-import { ILoadAccountByEmailRepository } from '@/data/protocols'
+import { IHashComparer, ILoadAccountByEmailRepository } from '@/data/protocols'
 import { AuthenticationUseCase } from '.'
 import { IAuthCredentials } from '@/domain/usecases'
 
@@ -8,7 +8,7 @@ const makeFakeAccount = (): AccountModel => ({
   id: 'any_id',
   email: 'any@email.com',
   name: 'any_name',
-  password: 'any_password',
+  password: 'hashed_password',
 })
 
 const makeFakeAuthenticationCredentials = (): IAuthCredentials => ({
@@ -28,18 +28,34 @@ const makeLoadAccountByEmailRepository = (): ILoadAccountByEmailRepository => {
   return new LoadAccountByEmailRepositoryStub()
 }
 
+const makeHashComparer = (): IHashComparer => {
+  class HashComparerStub implements IHashComparer {
+    async compare(): Promise<boolean> {
+      return new Promise((resolve) => resolve(true))
+    }
+  }
+
+  return new HashComparerStub()
+}
+
 interface ISut {
   sut: AuthenticationUseCase
   loadAccountByEmailRepositoryStub: ILoadAccountByEmailRepository
+  hashComparerStub: IHashComparer
 }
 
 const makeSut = (): ISut => {
   const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository()
-  const sut = new AuthenticationUseCase(loadAccountByEmailRepositoryStub)
+  const hashComparerStub = makeHashComparer()
+  const sut = new AuthenticationUseCase(
+    loadAccountByEmailRepositoryStub,
+    hashComparerStub,
+  )
 
   return {
     sut,
     loadAccountByEmailRepositoryStub,
+    hashComparerStub,
   }
 }
 
@@ -65,5 +81,12 @@ describe('AuthenticationUseCase', () => {
     vi.spyOn(loadAccountByEmailRepositoryStub, 'load').mockReturnValueOnce(null)
     const token = await sut.execute(makeFakeAuthenticationCredentials())
     expect(token).toBeNull()
+  })
+
+  it('should call HashComparer with correct values', async () => {
+    const { sut, hashComparerStub } = makeSut()
+    const comparerSpy = vi.spyOn(hashComparerStub, 'compare')
+    await sut.execute(makeFakeAuthenticationCredentials())
+    expect(comparerSpy).toHaveBeenCalledWith('any_password', 'hashed_password')
   })
 })
