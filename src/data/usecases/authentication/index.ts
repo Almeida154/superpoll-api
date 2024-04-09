@@ -25,11 +25,14 @@ export class AuthenticationUseCase implements IAuthenticationUseCase {
     const account = await this.loadAccountByEmailRepository.load(
       credentials.email,
     )
-
     if (!account) return null
-    await this.hashComparer.compare(credentials.password, account.password)
-    await this.tokenGenerator.generate(account.id)
 
-    return null
+    const isPasswordValid = await this.hashComparer.compare(
+      credentials.password,
+      account.password,
+    )
+    if (!isPasswordValid) return null
+
+    return await this.tokenGenerator.generate(account.id)
   }
 }
