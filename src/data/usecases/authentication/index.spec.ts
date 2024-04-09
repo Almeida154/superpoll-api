@@ -89,4 +89,13 @@ describe('AuthenticationUseCase', () => {
     await sut.execute(makeFakeAuthenticationCredentials())
     expect(comparerSpy).toHaveBeenCalledWith('any_password', 'hashed_password')
   })
+
+  it('should throw if HashComparer throws', async () => {
+    const { sut, hashComparerStub } = makeSut()
+    vi.spyOn(hashComparerStub, 'compare').mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error())),
+    )
+    const comparisonPromise = sut.execute(makeFakeAuthenticationCredentials())
+    expect(comparisonPromise).rejects.toThrow()
+  })
 })
