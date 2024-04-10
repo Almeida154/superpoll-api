@@ -24,4 +24,13 @@ describe('JwtAdapter', () => {
     const accessToken = await sut.encrypt('any_id')
     expect(accessToken).toBe('any_token')
   })
+
+  it('should throw if sign throws', async () => {
+    const sut = new JwtAdapter('secret')
+    vi.spyOn(jwt, 'sign').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const accessTokenPromise = sut.encrypt('any_id')
+    await expect(accessTokenPromise).rejects.toThrow()
+  })
 })
