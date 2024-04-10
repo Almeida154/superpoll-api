@@ -1,6 +1,6 @@
 import { SignUpController } from '@/presentation/controllers/sign-up'
 import { AddAccountUseCase } from '@/data/usecases'
-import { BcryptAdapter } from '@/infra/cryptography/bcrypt'
+import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
 import {
   AccountMongoRepository,
   LogMongoRepository,

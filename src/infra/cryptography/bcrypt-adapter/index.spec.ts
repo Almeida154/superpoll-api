@@ -1,7 +1,7 @@
 import { describe, expect, it, vitest } from 'vitest'
 import bcrypt from 'bcrypt'
 
-import { BcryptAdapter } from './bcrypt'
+import { BcryptAdapter } from '.'
 
 interface ISut {
   sut: BcryptAdapter
