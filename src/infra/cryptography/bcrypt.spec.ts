@@ -40,7 +40,7 @@ describe('BcryptAdapter', () => {
     expect(hash).toBe('hash')
   })
 
-  it('should throw if bcrypt throws', async () => {
+  it('should throw if hash throws', async () => {
     const { sut } = makeSut()
     vitest.spyOn(bcrypt, 'hash').mockImplementationOnce(async () => {
       return new Promise((resolve, reject) => reject(new Error()))
@@ -69,5 +69,14 @@ describe('BcryptAdapter', () => {
     })
     const isValid = await sut.compare('any_value', 'any_hash')
     expect(isValid).toBe(false)
+  })
+
+  it('should throw if compare throws', async () => {
+    const { sut } = makeSut()
+    vitest.spyOn(bcrypt, 'compare').mockImplementationOnce(async () => {
+      return new Promise((resolve, reject) => reject(new Error()))
+    })
+    const comparisonPromise = sut.compare('any_value', 'any_hash')
+    await expect(comparisonPromise).rejects.toThrow()
   })
 })
