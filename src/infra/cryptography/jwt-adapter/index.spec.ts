@@ -6,7 +6,7 @@ import { JwtAdapter } from '.'
 vi.mock('jsonwebtoken', () => ({
   default: {
     async sign(): Promise<string> {
-      return new Promise((resolve) => resolve('encrypted_value'))
+      return new Promise((resolve) => resolve('any_token'))
     },
   },
 }))
@@ -17,5 +17,11 @@ describe('JwtAdapter', () => {
     const signSpy = vi.spyOn(jwt, 'sign')
     await sut.encrypt('any_id')
     expect(signSpy).toHaveBeenCalledWith({ id: 'any_id' }, 'secret')
+  })
+
+  it('should return a token if sign succeed', async () => {
+    const sut = new JwtAdapter('secret')
+    const accessToken = await sut.encrypt('any_id')
+    expect(accessToken).toBe('any_token')
   })
 })
