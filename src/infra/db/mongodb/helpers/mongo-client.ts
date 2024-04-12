@@ -46,7 +46,7 @@ export const MongoClient = {
     await teardown()
   },
 
-  async getCollection(name: string): Promise<Collection> {
+  async getCollection<T>(name: string): Promise<Collection<Omit<T, 'id'>>> {
     if (!this.client?.db()) {
       await this.connect({ useMemory: this.usingMemory, url: this.url })
     }
