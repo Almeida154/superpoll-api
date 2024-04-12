@@ -4,8 +4,8 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   test: {
     coverage: {
-      provider: 'istanbul',
-      include: ['**/*.ts', '!**/src/main/**'],
+      provider: 'v8',
+      include: ['**/*.ts'],
     },
     alias: {
       '@': path.resolve(__dirname, 'src'),

@@ -1,12 +1,17 @@
 import { IHttpResponse } from '@/presentation/protocols'
-import { InternalServerError } from '@/presentation/errors'
+import { InternalServerError, UnauthorizedError } from '@/presentation/errors'
 
 export const badRequest = (error: Error): IHttpResponse => ({
   statusCode: 400,
   body: error,
 })
 
-export const internalServerError = (error: Error): IHttpResponse => ({
+export const unauthorized = (): IHttpResponse => ({
+  statusCode: 401,
+  body: new UnauthorizedError(),
+})
+
+export const internalException = (error: Error): IHttpResponse => ({
   statusCode: 500,
   body: new InternalServerError(error.stack),
 })

@@ -5,7 +5,7 @@ import { MongoClient } from '../../helpers/mongo-client'
 
 import { LogMongoRepository } from '.'
 
-const makeSUT = () => {
+const makeSut = () => {
   return new LogMongoRepository()
 }
 
@@ -25,8 +25,8 @@ describe('LogMongoRepository', () => {
     await collection.deleteMany()
   })
 
-  it('Should create an error log on success', async () => {
-    const sut = makeSUT()
+  it('should create an error log on success', async () => {
+    const sut = makeSut()
     await sut.logError('any_sack')
     const count = await collection.countDocuments()
     expect(count).toBe(1)

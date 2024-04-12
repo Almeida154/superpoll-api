@@ -1,4 +1,4 @@
-import { IErrorLogRepository } from '@/data/protocols/error-log-repository'
+import { IErrorLogRepository } from '@/data/protocols/db/log/error-log-repository'
 
 import {
   IController,
@@ -7,13 +7,10 @@ import {
 } from '@/presentation/protocols'
 
 export class ControllerLogDecorator implements IController {
-  private readonly controller: IController
-  private readonly logRepository: IErrorLogRepository
-
-  constructor(controller: IController, logRepository: IErrorLogRepository) {
-    this.controller = controller
-    this.logRepository = logRepository
-  }
+  constructor(
+    private readonly controller: IController,
+    private readonly logRepository: IErrorLogRepository,
+  ) {}
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     const httpResponse = await this.controller.handle(httpRequest)

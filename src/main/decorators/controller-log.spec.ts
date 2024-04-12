@@ -7,7 +7,7 @@ import {
   IHttpResponse,
 } from '@/presentation/protocols'
 
-import { internalServerError, ok } from '@/presentation/helpers/http'
+import { internalException, ok } from '@/presentation/helpers/http/http'
 import { IErrorLogRepository } from '@/data/protocols'
 import { AccountModel } from '@/domain/models'
 
@@ -34,7 +34,7 @@ const makeLogRepository = (): IErrorLogRepository => {
 const makeFakeServerError = (): IHttpResponse => {
   const fakeError = new Error()
   fakeError.stack = 'any_stack'
-  return internalServerError(fakeError)
+  return internalException(fakeError)
 }
 
 const makeFakeAccount = (): AccountModel => ({
@@ -59,7 +59,7 @@ interface ISut {
   errorLogRepositoryStub: IErrorLogRepository
 }
 
-const makeSUT = (): ISut => {
+const makeSut = (): ISut => {
   const controllerStub = makeController()
   const errorLogRepositoryStub = makeLogRepository()
   const sut = new ControllerLogDecorator(controllerStub, errorLogRepositoryStub)
@@ -72,8 +72,8 @@ const makeSUT = (): ISut => {
 }
 
 describe('ControllerLog Decorator', () => {
-  it('Should calls controller handle', async () => {
-    const { sut, controllerStub } = makeSUT()
+  it('should call controller handle', async () => {
+    const { sut, controllerStub } = makeSut()
 
     const handleSpy = vi.spyOn(controllerStub, 'handle')
 
@@ -81,15 +81,15 @@ describe('ControllerLog Decorator', () => {
     expect(handleSpy).toHaveBeenCalledWith(makeFakeRequest())
   })
 
-  it('Should returns the same result of the controller', async () => {
-    const { sut } = makeSUT()
+  it('should return the same result of the controller', async () => {
+    const { sut } = makeSut()
 
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok(makeFakeAccount()))
   })
 
-  it('Should calls ErrorLogRepository with correct error if controller returns a server error', async () => {
-    const { sut, controllerStub, errorLogRepositoryStub } = makeSUT()
+  it('should call ErrorLogRepository with correct error if controller returns a server error', async () => {
+    const { sut, controllerStub, errorLogRepositoryStub } = makeSut()
 
     vi.spyOn(controllerStub, 'handle').mockReturnValueOnce(
       new Promise((resolve) => resolve(makeFakeServerError())),

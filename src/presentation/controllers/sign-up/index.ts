@@ -3,52 +3,27 @@ import {
   IHttpResponse,
   IController,
   IAddAccountUseCase,
-  IEmailValidator,
 } from './protocols'
-
-import { NoProvidedParamError, InvalidParamError } from '@/presentation/errors'
 
 import {
   badRequest,
-  internalServerError,
+  internalException,
   ok,
-} from '@/presentation/helpers/http'
+} from '@/presentation/helpers/http/http'
+import { IValidation } from '@/presentation/helpers/validators'
 
 export class SignUpController implements IController {
-  private readonly emailValidator: IEmailValidator
-  private readonly addAccountUseCase: IAddAccountUseCase
-
   constructor(
-    emailValidator: IEmailValidator,
-    addAccountUseCase: IAddAccountUseCase,
-  ) {
-    this.emailValidator = emailValidator
-    this.addAccountUseCase = addAccountUseCase
-  }
+    private readonly addAccountUseCase: IAddAccountUseCase,
+    private readonly validation: IValidation,
+  ) {}
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
-      const requiredFields = [
-        'name',
-        'email',
-        'password',
-        'passwordConfirmation',
-      ]
+      const error = this.validation.validate(httpRequest.body)
+      if (error) return badRequest(error)
 
-      for (const field of requiredFields) {
-        if (!httpRequest.body[field])
-          return badRequest(new NoProvidedParamError(field))
-      }
-
-      const { password, passwordConfirmation, email, name } = httpRequest.body
-
-      if (password !== passwordConfirmation) {
-        return badRequest(new InvalidParamError('passwordConfirmation'))
-      }
-
-      const isEmailValid = this.emailValidator.isValid(email)
-
-      if (!isEmailValid) return badRequest(new InvalidParamError('email'))
+      const { password, email, name } = httpRequest.body
 
       const account = await this.addAccountUseCase.execute({
         email,
@@ -58,7 +33,7 @@ export class SignUpController implements IController {
 
       return ok(account)
     } catch (error) {
-      return internalServerError(error)
+      return internalException(error)
     }
   }
 }

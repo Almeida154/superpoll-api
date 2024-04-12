@@ -7,7 +7,7 @@ describe('Mongo Client Helper', () => {
     await sut.disconnect()
   })
 
-  it('Should connects to memory server if useMemory prop is true', async () => {
+  it('should connect to memory server if useMemory prop is true', async () => {
     const connectToMemoryServerSpy = vi.spyOn(sut, 'connectToMemoryServer')
 
     await sut.connect({ useMemory: true })
@@ -15,7 +15,7 @@ describe('Mongo Client Helper', () => {
     expect(connectToMemoryServerSpy).toHaveBeenCalled()
   })
 
-  it('Should connects to mongo server if a valid url is provided', async () => {
+  it('should connect to mongo server if a valid url is provided', async () => {
     vi.spyOn(MongoClient, 'connect').mockImplementationOnce(async () => {
       return new Promise((resolve) => resolve(null))
     })
@@ -28,7 +28,7 @@ describe('Mongo Client Helper', () => {
     expect(MongoClient.connect).toHaveBeenCalledWith('valid_url')
   })
 
-  it('Should disconnects from memory server when disconnects', async () => {
+  it('should disconnect from memory server when disconnects', async () => {
     const disconnectFromMemoryServerSpy = vi.spyOn(
       sut,
       'disconnectFromMemoryServer',
@@ -40,7 +40,7 @@ describe('Mongo Client Helper', () => {
     expect(disconnectFromMemoryServerSpy).toHaveBeenCalled()
   })
 
-  it('Should disconnects from mongo server when disconnects', async () => {
+  it('should disconnect from mongo server when disconnects', async () => {
     vi.spyOn(MongoClient, 'connect').mockImplementationOnce(async () => {
       return new Promise((resolve) => resolve(null))
     })
@@ -58,7 +58,7 @@ describe('Mongo Client Helper', () => {
     expect(disconnectFromServerSpy).toHaveBeenCalled()
   })
 
-  it('Should reconnects if mongodb is down', async () => {
+  it('should reconnect if mongodb is down', async () => {
     await sut.connect({ useMemory: true })
 
     let collection = await sut.getCollection('accounts')
