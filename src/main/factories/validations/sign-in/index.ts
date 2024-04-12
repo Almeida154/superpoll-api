@@ -7,7 +7,7 @@ import {
 
 import { EmailValidatorAdapter } from '@/main/adapters/email-validator'
 
-export const makeLoginValidation = (): IValidation => {
+export const makeSignInValidation = (): IValidation => {
   const validations: IValidation[] = []
   for (const field of ['email', 'password']) {
     validations.push(new RequiredFieldValidation(field))

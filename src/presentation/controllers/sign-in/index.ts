@@ -15,7 +15,7 @@ import {
   IHttpResponse,
 } from '@/presentation/protocols'
 
-export class LoginController implements IController {
+export class SignInController implements IController {
   constructor(
     private readonly authentication: IAuthenticationUseCase,
     private readonly validation: IValidation,

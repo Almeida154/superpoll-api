@@ -7,7 +7,7 @@
     "dev": "ts-node-dev -r tsconfig-paths/register --no-notify --respawn --transpile-only --ignore-watch node_modules src/main/server.ts",
     "test": "vitest --passWithNoTests",
     "test:unit": "npm test -- --reporter=dot -c vitest-unit.config.js",
-    "test:integration": "npm test -- --reporter=dot -c vitest-integration.config.js",
+    "test:integration": "npm test -- --reporter=dot --pool=forks -c vitest-integration.config.js",
     "test:staged": "npm test -- --run",
     "test:ci": "npm test -- --run --coverage"
   },

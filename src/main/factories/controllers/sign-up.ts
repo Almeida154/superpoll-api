@@ -1,4 +1,4 @@
-import { SignUpController } from '@/presentation/controllers/sign-up'
+import { SignUpController } from '@/presentation/controllers'
 import { AddAccountUseCase } from '@/data/usecases'
 import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
 import {
@@ -20,6 +20,5 @@ export const makeSignUpController = (): IController => {
     makeSignUpValidation(),
   )
 
-  const logMongoRepository = new LogMongoRepository()
-  return new ControllerLogDecorator(signUpController, logMongoRepository)
+  return new ControllerLogDecorator(signUpController, new LogMongoRepository())
 }

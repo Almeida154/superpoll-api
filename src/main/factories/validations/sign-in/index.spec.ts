@@ -8,7 +8,7 @@ import {
 } from '@/presentation/helpers/validators'
 
 import { IEmailValidator } from '@/presentation/protocols'
-import { makeLoginValidation } from '.'
+import { makeSignInValidation } from '.'
 
 vi.mock('@/presentation/helpers/validators/validation-composite')
 
@@ -24,7 +24,7 @@ const makeEmailValidator = (): IEmailValidator => {
 
 describe('LoginValidation Factory', () => {
   it('should call ValidationComposite with all validations', () => {
-    makeLoginValidation()
+    makeSignInValidation()
     const validations: IValidation[] = []
     for (const field of ['email', 'password']) {
       validations.push(new RequiredFieldValidation(field))

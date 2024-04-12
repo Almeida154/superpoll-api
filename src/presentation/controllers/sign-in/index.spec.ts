@@ -13,7 +13,7 @@ import { NoProvidedParamError } from '@/presentation/errors'
 import { IAuthenticationUseCase } from '@/domain/usecases'
 import { IValidation } from '@/presentation/helpers/validators'
 
-import { LoginController } from '.'
+import { SignInController } from '.'
 
 const makeFakeRequest = (): IHttpRequest => ({
   body: {
@@ -43,7 +43,7 @@ const makeValidation = (): IValidation => {
 }
 
 interface ISut {
-  sut: LoginController
+  sut: SignInController
   authenticationStub: IAuthenticationUseCase
   validationStub: IValidation
 }
@@ -52,7 +52,7 @@ const makeSut = (): ISut => {
   const authenticationStub = makeAuthentication()
   const validationStub = makeValidation()
 
-  const sut = new LoginController(authenticationStub, validationStub)
+  const sut = new SignInController(authenticationStub, validationStub)
 
   return {
     sut,
@@ -61,7 +61,7 @@ const makeSut = (): ISut => {
   }
 }
 
-describe('LoginController', () => {
+describe('SignInController', () => {
   it('should call Authentication with correct values', async () => {
     const { sut, authenticationStub } = makeSut()
     const authSpy = vi.spyOn(authenticationStub, 'execute')
