@@ -47,5 +47,12 @@ describe('Authentication routes', () => {
         .send({ email: 'davidalmeida154of@gmail.com', password: '123' })
         .expect(200)
     })
+
+    it('should return 401 if user not found', async () => {
+      await request(app)
+        .post('/api/sign-in')
+        .send({ email: 'davidalmeida154of@gmail.com', password: '123' })
+        .expect(401)
+    })
   })
 })
