@@ -1,7 +1,7 @@
 import { describe, expect, it, vitest } from 'vitest'
 import validator from 'validator'
 
-import { EmailValidatorAdapter } from './validator'
+import { EmailValidatorAdapter } from '.'
 
 const makeSut = (): EmailValidatorAdapter => {
   return new EmailValidatorAdapter()

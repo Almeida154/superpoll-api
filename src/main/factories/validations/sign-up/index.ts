@@ -5,7 +5,7 @@ import {
   RequiredFieldValidation,
   ValidationComposite,
 } from '@/presentation/helpers/validators'
-import { EmailValidatorAdapter } from '@/utils/email-validator/validator'
+import { EmailValidatorAdapter } from '@/main/adapters/email-validator'
 
 export const makeSignUpValidation = (): IValidation => {
   const validations: IValidation[] = []

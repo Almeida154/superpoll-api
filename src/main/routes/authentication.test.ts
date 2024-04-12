@@ -4,7 +4,7 @@ import request from 'supertest'
 import app from '@/main/config/app'
 import { MongoClient } from '@/infra/db/mongodb/helpers/mongo-client'
 
-describe('SignUp Routes', () => {
+describe('Authentication routes', () => {
   beforeAll(async () => {
     await MongoClient.connect({ useMemory: true })
   })
@@ -18,15 +18,17 @@ describe('SignUp Routes', () => {
     await collection.deleteMany()
   })
 
-  it('should return an account on success', async () => {
-    await request(app)
-      .post('/api/sign-up')
-      .send({
-        name: 'David',
-        email: 'davidalmeida154of@gmail.com',
-        password: '123',
-        passwordConfirmation: '123',
-      })
-      .expect(200)
+  describe('POST /sign-up', () => {
+    it('should return 200 on signs up', async () => {
+      await request(app)
+        .post('/api/sign-up')
+        .send({
+          name: 'David',
+          email: 'davidalmeida154of@gmail.com',
+          password: '123',
+          passwordConfirmation: '123',
+        })
+        .expect(200)
+    })
   })
 })

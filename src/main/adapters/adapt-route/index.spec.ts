@@ -1,4 +1,4 @@
-import { adaptRoute } from './express-route'
+import { adaptRoute } from '.'
 import { Request, Response } from 'express'
 import { IController, IHttpResponse } from '@/presentation/protocols'
 import { describe, expect, it, vi, vitest } from 'vitest'
