@@ -38,7 +38,7 @@ const makeLoadAccountByEmailRepository = (): ILoadAccountByEmailRepository => {
 
 const makeUpdateAccessTokenRepository = (): IUpdateAccessTokenRepository => {
   class UpdateAccessTokenRepository implements IUpdateAccessTokenRepository {
-    async update(): Promise<void> {
+    async updateAccessToken(): Promise<void> {
       return new Promise((resolve) => resolve())
     }
   }
@@ -169,16 +169,20 @@ describe('AuthenticationUseCase', () => {
 
   it('should call UpdateAccessTokenRepository with correct values', async () => {
     const { sut, updateAccessTokenRepositoryStub } = makeSut()
-    const updateSpy = vi.spyOn(updateAccessTokenRepositoryStub, 'update')
+    const updateSpy = vi.spyOn(
+      updateAccessTokenRepositoryStub,
+      'updateAccessToken',
+    )
     await sut.execute(makeFakeAuthenticationCredentials())
     expect(updateSpy).toHaveBeenCalledWith('any_id', 'any_token')
   })
 
   it('should throw if UpdateAccessTokenRepository throws', async () => {
     const { sut, updateAccessTokenRepositoryStub } = makeSut()
-    vi.spyOn(updateAccessTokenRepositoryStub, 'update').mockReturnValueOnce(
-      new Promise((resolve, reject) => reject(new Error())),
-    )
+    vi.spyOn(
+      updateAccessTokenRepositoryStub,
+      'updateAccessToken',
+    ).mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
     const accessTokenPromise = sut.execute(makeFakeAuthenticationCredentials())
     expect(accessTokenPromise).rejects.toThrow()
   })
