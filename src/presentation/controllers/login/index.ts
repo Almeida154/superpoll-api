@@ -16,13 +16,10 @@ import {
 } from '@/presentation/protocols'
 
 export class LoginController implements IController {
-  private readonly authentication: IAuthenticationUseCase
-  private readonly validation: IValidation
-
-  constructor(authentication: IAuthenticationUseCase, validation: IValidation) {
-    this.authentication = authentication
-    this.validation = validation
-  }
+  constructor(
+    private readonly authentication: IAuthenticationUseCase,
+    private readonly validation: IValidation,
+  ) {}
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {

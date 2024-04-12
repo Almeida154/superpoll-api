@@ -8,22 +8,12 @@ import {
 import { IAuthCredentials, IAuthenticationUseCase } from '@/domain/usecases'
 
 export class AuthenticationUseCase implements IAuthenticationUseCase {
-  private readonly loadAccountByEmailRepository: ILoadAccountByEmailRepository
-  private readonly updateAccessTokenRepository: IUpdateAccessTokenRepository
-  private readonly hashComparer: IHashComparer
-  private readonly tokenGenerator: IEncrypter
-
   constructor(
-    loadAccountByEmailRepository: ILoadAccountByEmailRepository,
-    updateAccessTokenRepository: IUpdateAccessTokenRepository,
-    hashComparer: IHashComparer,
-    tokenGenerator: IEncrypter,
-  ) {
-    this.loadAccountByEmailRepository = loadAccountByEmailRepository
-    this.updateAccessTokenRepository = updateAccessTokenRepository
-    this.hashComparer = hashComparer
-    this.tokenGenerator = tokenGenerator
-  }
+    private readonly loadAccountByEmailRepository: ILoadAccountByEmailRepository,
+    private readonly updateAccessTokenRepository: IUpdateAccessTokenRepository,
+    private readonly hashComparer: IHashComparer,
+    private readonly tokenGenerator: IEncrypter,
+  ) {}
 
   async execute(credentials: IAuthCredentials): Promise<string> {
     const account = await this.loadAccountByEmailRepository.loadByEmail(
