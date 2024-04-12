@@ -58,4 +58,14 @@ describe('AccountMongoRepository', () => {
     const account = await sut.loadByEmail('any@email.com')
     expect(account).toBeFalsy()
   })
+
+  it('should update account accessToken on updateAccessToken success', async () => {
+    const sut = makeSut()
+    let account = await sut.add(makeFakeAccount())
+    expect(account).not.toHaveProperty('accessToken')
+    await sut.updateAccessToken(account.id, 'any_token')
+    account = await sut.loadByEmail(account.email)
+    expect(account).toBeTruthy()
+    expect(account.accessToken).toBe('any_token')
+  })
 })
