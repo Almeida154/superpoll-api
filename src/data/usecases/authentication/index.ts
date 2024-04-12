@@ -26,7 +26,7 @@ export class AuthenticationUseCase implements IAuthenticationUseCase {
   }
 
   async execute(credentials: IAuthCredentials): Promise<string> {
-    const account = await this.loadAccountByEmailRepository.load(
+    const account = await this.loadAccountByEmailRepository.loadByEmail(
       credentials.email,
     )
     if (!account) return null

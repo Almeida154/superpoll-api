@@ -28,7 +28,7 @@ const makeLoadAccountByEmailRepository = (): ILoadAccountByEmailRepository => {
   class LoadAccountByEmailRepositoryStub
     // eslint-disable-next-line prettier/prettier
     implements ILoadAccountByEmailRepository {
-    async load(): Promise<AccountModel> {
+    async loadByEmail(): Promise<AccountModel> {
       return new Promise((resolve) => resolve(makeFakeAccount()))
     }
   }
@@ -99,23 +99,30 @@ const makeSut = (): ISut => {
 describe('AuthenticationUseCase', () => {
   it('should call LoadAccountByEmailRepository with correct email', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
-    const loadSpy = vi.spyOn(loadAccountByEmailRepositoryStub, 'load')
+    const loadByEmailSpy = vi.spyOn(
+      loadAccountByEmailRepositoryStub,
+      'loadByEmail',
+    )
     await sut.execute(makeFakeAuthenticationCredentials())
-    expect(loadSpy).toHaveBeenCalledWith('any@email.com')
+    expect(loadByEmailSpy).toHaveBeenCalledWith('any@email.com')
   })
 
   it('should throw if LoadAccountByEmailRepository throws', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
-    vi.spyOn(loadAccountByEmailRepositoryStub, 'load').mockReturnValueOnce(
-      new Promise((resolve, reject) => reject(new Error())),
-    )
+    vi.spyOn(
+      loadAccountByEmailRepositoryStub,
+      'loadByEmail',
+    ).mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
     const accessTokenPromise = sut.execute(makeFakeAuthenticationCredentials())
     expect(accessTokenPromise).rejects.toThrow()
   })
 
   it('should return null if LoadAccountByEmailRepository returns null', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
-    vi.spyOn(loadAccountByEmailRepositoryStub, 'load').mockReturnValueOnce(null)
+    vi.spyOn(
+      loadAccountByEmailRepositoryStub,
+      'loadByEmail',
+    ).mockReturnValueOnce(null)
     const accessToken = await sut.execute(makeFakeAuthenticationCredentials())
     expect(accessToken).toBeNull()
   })
