@@ -26,8 +26,8 @@ const makeFakeAuthenticationCredentials = (): IAuthCredentials => ({
 
 const makeLoadAccountByEmailRepository = (): ILoadAccountByEmailRepository => {
   class LoadAccountByEmailRepositoryStub
-    // eslint-disable-next-line prettier/prettier
-    implements ILoadAccountByEmailRepository {
+    implements ILoadAccountByEmailRepository
+  {
     async loadByEmail(): Promise<AccountModel> {
       return new Promise((resolve) => resolve(makeFakeAccount()))
     }

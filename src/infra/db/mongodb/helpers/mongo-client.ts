@@ -1,12 +1,10 @@
 import { setup, teardown } from 'vitest-mongodb'
-import { MongoClient as Client, Collection, Db } from 'mongodb'
+import { MongoClient as Client, Collection, Db, WithId } from 'mongodb'
 
 interface IConnectOptions {
   useMemory?: boolean
   url?: string
 }
-
-type Result<T> = T & { _id?: string }
 
 export const MongoClient = {
   db: null as Db,
@@ -56,7 +54,8 @@ export const MongoClient = {
     return this.client.db().collection(name)
   },
 
-  map<T>(resultItem: Partial<Result<T>>): T {
+  map<T>(resultItem: Partial<WithId<Document>>): T {
+    if (!resultItem) return null
     const { _id, ...rest } = resultItem
     return { id: _id, ...rest } as T
   },
