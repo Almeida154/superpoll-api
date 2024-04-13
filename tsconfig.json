@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "module": "CommonJS",
-    "target": "ES2021",
+    "target": "ES6",
     "esModuleInterop": true,
     "allowJs": true,
     "baseUrl": "src",
@@ -13,6 +13,8 @@
       "@/*": [
         "*"
       ]
-    }
-  }
+    },
+  },
+  "exclude": ["**/*.test.ts", "**/*.spec.ts"],
+  "include": ["src"]
 }
