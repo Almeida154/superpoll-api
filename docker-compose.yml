@@ -14,12 +14,14 @@ services:
     image: node:20
     working_dir: /usr/src/superpoll-api
     restart: always
-    entrypoint: ["bash", "-c", "npm install && npm run debug"]
+    entrypoint: ["bash", "-c", "npm install --omit=dev && npm run debug"]
     volumes:
-      - ./dist:/usr/src/superpoll-api/dist
+      - ./dist/:/usr/src/superpoll-api/dist/
       - ./package.json:/usr/src/superpoll-api/package.json
     ports:
       - "3000:3000"
       - "9222:9222"
     links:
+      - mongo
+    depends_on:
       - mongo

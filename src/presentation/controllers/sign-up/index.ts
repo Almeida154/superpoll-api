@@ -30,7 +30,6 @@ export class SignUpController implements IController {
         password,
         name,
       })
-
       return ok(account)
     } catch (error) {
       return internalException(error)
