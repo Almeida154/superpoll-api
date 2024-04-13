@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  mongo:
+    container_name: mongo-container
+    image: mongo:7
+    restart: always
+    volumes:
+      - ./db:/data/db
+    ports:
+      - "27017:27017"
+  api:
+    container_name: api-container
+    build: .
+    image: superpoll-api
+    restart: always
+    command: npm start
+    volumes:
+      - ./dist:/usr/src/superpoll-api/dist
+    ports:
+      - "3000:3000"
+    links:
+      - mongo
