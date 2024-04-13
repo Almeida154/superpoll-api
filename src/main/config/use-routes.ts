@@ -9,7 +9,10 @@ export default async (app: Express): Promise<void> => {
   const routesPath = path.join(__dirname, '..', 'routes')
 
   readdirSync(routesPath).map(async (file) => {
-    if (!file.includes('.test.')) {
+    const isTest = file.includes('.test.')
+    const isSourceMap = file.includes('.map')
+
+    if (!isTest && !isSourceMap) {
       const route = await import(path.join(routesPath, file))
       route.default(router)
     }

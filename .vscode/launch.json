@@ -1,0 +1,13 @@
+{
+  "configurations": [{
+    "name": "Docker: Attach to Node",
+    "port": 9222,
+    "restart": true,
+    "request": "attach",
+    "skipFiles": [
+      "<node_internals>/**"
+    ],
+    "type": "node",
+    "remoteRoot": "/usr/src/superpoll-api",
+  }]
+}

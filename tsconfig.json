@@ -4,6 +4,7 @@
     "module": "CommonJS",
     "target": "ES6",
     "esModuleInterop": true,
+    "sourceMap": true,
     "allowJs": true,
     "baseUrl": "src",
     "rootDirs": [

@@ -14,10 +14,12 @@ services:
     build: .
     image: superpoll-api
     restart: always
-    command: npm start
+    command: npm run debug
     volumes:
       - ./dist:/usr/src/superpoll-api/dist
+      - ./package.json:/usr/src/superpoll-api/package.json
     ports:
       - "3000:3000"
+      - "9222:9222"
     links:
       - mongo
