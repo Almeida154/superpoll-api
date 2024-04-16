@@ -3,6 +3,7 @@ import { describe, expect, it, vi, vitest } from 'vitest'
 import {
   NoProvidedParamError,
   InternalServerError,
+  EmailInUseError,
 } from '@/presentation/errors'
 
 import {
@@ -10,6 +11,7 @@ import {
   internalException,
   badRequest,
   unauthorized,
+  forbidden,
 } from '@/presentation/helpers/http/http'
 
 import { IValidation } from '@/presentation/helpers/validators'
@@ -113,6 +115,17 @@ describe('SignUp Controller', () => {
     expect(httpResponse).toEqual(
       internalException(new InternalServerError(null)),
     )
+  })
+
+  it('should return 403 if AddAccountUseCase returns null', async () => {
+    const { sut, addAccountUseCaseStub } = makeSut()
+
+    vitest
+      .spyOn(addAccountUseCaseStub, 'execute')
+      .mockReturnValueOnce(new Promise((resolve) => resolve(null)))
+
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(forbidden(new EmailInUseError()))
   })
 
   it('should return 200 if valid data is provided', async () => {
