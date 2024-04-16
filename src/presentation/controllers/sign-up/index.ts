@@ -1,3 +1,5 @@
+import { IAuthenticationUseCase } from '@/domain/usecases'
+
 import {
   IHttpRequest,
   IHttpResponse,
@@ -9,12 +11,15 @@ import {
   badRequest,
   internalException,
   ok,
+  unauthorized,
 } from '@/presentation/helpers/http/http'
+
 import { IValidation } from '@/presentation/helpers/validators'
 
 export class SignUpController implements IController {
   constructor(
     private readonly addAccountUseCase: IAddAccountUseCase,
+    private readonly authentication: IAuthenticationUseCase,
     private readonly validation: IValidation,
   ) {}
 
@@ -30,6 +35,10 @@ export class SignUpController implements IController {
         password,
         name,
       })
+
+      const accessToken = await this.authentication.execute({ email, password })
+      if (!accessToken) return unauthorized()
+
       return ok(account)
     } catch (error) {
       return internalException(error)
