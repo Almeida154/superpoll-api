@@ -4,6 +4,7 @@
     "module": "CommonJS",
     "target": "ES6",
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "sourceMap": true,
     "allowJs": true,
     "baseUrl": "src",
@@ -17,6 +18,5 @@
       ]
     },
   },
-  "exclude": ["**/*.test.ts", "**/*.spec.ts"],
   "include": ["src"]
 }
