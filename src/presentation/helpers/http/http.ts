@@ -11,6 +11,11 @@ export const unauthorized = (): IHttpResponse => ({
   body: new UnauthorizedError(),
 })
 
+export const forbidden = (error: Error): IHttpResponse => ({
+  statusCode: 403,
+  body: error,
+})
+
 export const internalException = (error: Error): IHttpResponse => ({
   statusCode: 500,
   body: new InternalServerError(error.stack),

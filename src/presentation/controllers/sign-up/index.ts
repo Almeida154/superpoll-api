@@ -9,12 +9,14 @@ import {
 
 import {
   badRequest,
+  forbidden,
   internalException,
   ok,
   unauthorized,
 } from '@/presentation/helpers/http/http'
 
 import { IValidation } from '@/presentation/helpers/validators'
+import { EmailInUseError } from '@/presentation/errors'
 
 export class SignUpController implements IController {
   constructor(
@@ -30,11 +32,12 @@ export class SignUpController implements IController {
 
       const { password, email, name } = httpRequest.body
 
-      await this.addAccountUseCase.execute({
+      const account = await this.addAccountUseCase.execute({
         email,
         password,
         name,
       })
+      if (!account) return forbidden(new EmailInUseError())
 
       const accessToken = await this.authentication.execute({ email, password })
       if (!accessToken) return unauthorized()
