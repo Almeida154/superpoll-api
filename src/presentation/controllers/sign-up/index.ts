@@ -30,7 +30,7 @@ export class SignUpController implements IController {
 
       const { password, email, name } = httpRequest.body
 
-      const account = await this.addAccountUseCase.execute({
+      await this.addAccountUseCase.execute({
         email,
         password,
         name,
@@ -39,7 +39,7 @@ export class SignUpController implements IController {
       const accessToken = await this.authentication.execute({ email, password })
       if (!accessToken) return unauthorized()
 
-      return ok(account)
+      return ok({ accessToken })
     } catch (error) {
       return internalException(error)
     }
