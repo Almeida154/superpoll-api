@@ -1,7 +1,5 @@
 import { describe, expect, it, vi, vitest } from 'vitest'
 
-import { SignUpController } from '.'
-
 import {
   NoProvidedParamError,
   InternalServerError,
@@ -11,11 +9,15 @@ import {
   ok,
   internalException,
   badRequest,
+  unauthorized,
 } from '@/presentation/helpers/http/http'
+
+import { IValidation } from '@/presentation/helpers/validators'
+import { IAuthenticationUseCase } from '@/domain/usecases'
 
 import { AccountModel, IAddAccountUseCase, IHttpRequest } from './protocols'
 
-import { IValidation } from '@/presentation/helpers/validators'
+import { SignUpController } from '.'
 
 const makeAddAccountUseCase = (): IAddAccountUseCase => {
   class AddAccountStub implements IAddAccountUseCase {
@@ -53,18 +55,34 @@ const makeFakeRequest = (): IHttpRequest => ({
   },
 })
 
+const makeAuthentication = (): IAuthenticationUseCase => {
+  class AuthenticationStub implements IAuthenticationUseCase {
+    async execute(): Promise<string> {
+      return new Promise((resolve) => resolve('any_token'))
+    }
+  }
+
+  return new AuthenticationStub()
+}
+
 interface ISut {
   addAccountUseCaseStub: IAddAccountUseCase
   validationStub: IValidation
+  authenticationStub: IAuthenticationUseCase
   sut: SignUpController
 }
 
 const makeSut = (): ISut => {
   const addAccountUseCaseStub = makeAddAccountUseCase()
   const validationStub = makeValidation()
-  const sut = new SignUpController(addAccountUseCaseStub, validationStub)
+  const authenticationStub = makeAuthentication()
+  const sut = new SignUpController(
+    addAccountUseCaseStub,
+    authenticationStub,
+    validationStub,
+  )
 
-  return { addAccountUseCaseStub, validationStub, sut }
+  return { addAccountUseCaseStub, validationStub, authenticationStub, sut }
 }
 
 describe('SignUp Controller', () => {
@@ -110,6 +128,34 @@ describe('SignUp Controller', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  it('should call Authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const authSpy = vi.spyOn(authenticationStub, 'execute')
+    await sut.handle(makeFakeRequest())
+    expect(authSpy).toHaveBeenCalledWith({
+      email: 'any@mail.com',
+      password: 'any_password',
+    })
+  })
+
+  it('should return 401 if Authentication fails', async () => {
+    const { sut, authenticationStub } = makeSut()
+    vi.spyOn(authenticationStub, 'execute').mockReturnValueOnce(
+      new Promise((resolve) => resolve(null)),
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(unauthorized())
+  })
+
+  it('should return 500 if Authentication throws', async () => {
+    const { sut, authenticationStub } = makeSut()
+    vi.spyOn(authenticationStub, 'execute').mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error())),
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(internalException(new Error()))
   })
 
   it('should return 400 if Validation returns an error', async () => {
