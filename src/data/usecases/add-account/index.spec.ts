@@ -35,7 +35,7 @@ const makeLoadAccountByEmailRepository = (): ILoadAccountByEmailRepository => {
     implements ILoadAccountByEmailRepository
   {
     async loadByEmail(): Promise<AccountModel> {
-      return new Promise((resolve) => resolve(makeFakeAccount()))
+      return new Promise((resolve) => resolve(null))
     }
   }
 
@@ -128,13 +128,6 @@ describe('AddAccountUseCase', () => {
     await expect(accountPromise).rejects.toThrow()
   })
 
-  it('should return an account on success', async () => {
-    const { sut } = makeSut()
-
-    const account = await sut.execute(makeFakeAddAccountData())
-    expect(account).toEqual(makeFakeAccount())
-  })
-
   it('should call LoadAccountByEmailRepository with correct email', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
     const loadByEmailSpy = vi.spyOn(
@@ -143,5 +136,24 @@ describe('AddAccountUseCase', () => {
     )
     await sut.execute(makeFakeAddAccountData())
     expect(loadByEmailSpy).toHaveBeenCalledWith('valid@email.com')
+  })
+
+  it('should return null if LoadAccountByEmailRepository not returns null', async () => {
+    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
+
+    vi.spyOn(
+      loadAccountByEmailRepositoryStub,
+      'loadByEmail',
+    ).mockReturnValueOnce(new Promise((resolve) => resolve(makeFakeAccount())))
+
+    const account = await sut.execute(makeFakeAddAccountData())
+    expect(account).toBeNull()
+  })
+
+  it('should return an account on success', async () => {
+    const { sut } = makeSut()
+
+    const account = await sut.execute(makeFakeAddAccountData())
+    expect(account).toEqual(makeFakeAccount())
   })
 })

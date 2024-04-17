@@ -16,7 +16,13 @@ export class AddAccountUseCase implements IAddAccountUseCase {
 
   async execute(account: IAddAccountModel): Promise<AccountModel> {
     const hashedPassword = await this.encrypter.hash(account.password)
-    await this.loadAccountByEmailRepository.loadByEmail(account.email)
+
+    const emailExists = await this.loadAccountByEmailRepository.loadByEmail(
+      account.email,
+    )
+
+    if (emailExists) return null
+
     return await this.addAccountRepository.add({
       ...account,
       password: hashedPassword,

@@ -1,8 +1,9 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { NoProvidedParamError } from '@/presentation/errors'
+import { IValidation } from '@/presentation/protocols'
+
 import { ValidationComposite } from '.'
-import { IValidation } from '../../../protocols/validation'
 
 const makeValidation = (): IValidation => {
   class ValidationStub implements IValidation {
