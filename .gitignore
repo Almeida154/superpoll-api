@@ -3,3 +3,4 @@
 /coverage
 /html
 /db
+!src/data
