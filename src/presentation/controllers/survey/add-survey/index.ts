@@ -1,3 +1,4 @@
+import { badRequest, internalException } from '@/presentation/helpers/http'
 import {
   IController,
   IHttpRequest,
@@ -8,8 +9,12 @@ import {
 export class AddSurveyController implements IController {
   constructor(private readonly validation: IValidation) {}
 
-  handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
-    this.validation.validate(httpRequest.body)
-    return null
+  async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
+    try {
+      const error = this.validation.validate(httpRequest.body)
+      if (error) return badRequest(error)
+    } catch (error) {
+      return internalException(error)
+    }
   }
 }
