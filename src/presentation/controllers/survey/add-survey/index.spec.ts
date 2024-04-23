@@ -6,6 +6,7 @@ import {
 } from '../../authentication/sign-up/protocols'
 
 import { AddSurveyController } from '.'
+import { badRequest } from '@/presentation/helpers/http'
 
 const makeFakeRequest = (): IHttpRequest => ({
   body: {
@@ -51,5 +52,13 @@ describe('AddSurveyController', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  it('should return 400 if Validation fails', async () => {
+    const { sut, validationStub } = makeSut()
+    vi.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(new Error()))
   })
 })
