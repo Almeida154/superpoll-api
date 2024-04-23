@@ -7,7 +7,7 @@ import {
   IHttpResponse,
 } from '@/presentation/protocols'
 
-import { internalException, ok } from '@/presentation/helpers/http/http'
+import { internalException, ok } from '@/presentation/helpers/http'
 import { IErrorLogRepository } from '@/data/protocols'
 import { AccountModel } from '@/domain/models'
 

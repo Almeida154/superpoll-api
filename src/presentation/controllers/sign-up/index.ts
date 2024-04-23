@@ -13,9 +13,9 @@ import {
   internalException,
   ok,
   unauthorized,
-} from '@/presentation/helpers/http/http'
+} from '@/presentation/helpers/http'
 
-import { IValidation } from '@/presentation/helpers/validators'
+import { IValidation } from '@/presentation/protocols'
 import { EmailInUseError } from '@/presentation/errors'
 
 export class SignUpController implements IController {

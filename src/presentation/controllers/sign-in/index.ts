@@ -1,19 +1,18 @@
 import { IAuthenticationUseCase } from '@/domain/usecases'
 
-import { IValidation } from '@/presentation/helpers/validators'
+import {
+  IValidation,
+  IController,
+  IHttpRequest,
+  IHttpResponse,
+} from '@/presentation/protocols'
 
 import {
   badRequest,
   internalException,
   ok,
   unauthorized,
-} from '@/presentation/helpers/http/http'
-
-import {
-  IController,
-  IHttpRequest,
-  IHttpResponse,
-} from '@/presentation/protocols'
+} from '@/presentation/helpers/http'
 
 export class SignInController implements IController {
   constructor(

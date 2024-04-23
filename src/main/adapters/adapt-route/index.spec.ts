@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { IController, IHttpResponse } from '@/presentation/protocols'
 import { describe, expect, it, vi, vitest } from 'vitest'
 import { InvalidParamError } from '@/presentation/errors'
-import { badRequest, ok } from '@/presentation/helpers/http/http'
+import { badRequest, ok } from '@/presentation/helpers/http'
 
 const makeFakeExpressRequest = () => ({}) as Request
 

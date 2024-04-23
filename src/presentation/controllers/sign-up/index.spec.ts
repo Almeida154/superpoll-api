@@ -12,9 +12,9 @@ import {
   badRequest,
   unauthorized,
   forbidden,
-} from '@/presentation/helpers/http/http'
+} from '@/presentation/helpers/http'
 
-import { IValidation } from '@/presentation/helpers/validators'
+import { IValidation } from '@/presentation/protocols'
 import { IAuthenticationUseCase } from '@/domain/usecases'
 
 import { AccountModel, IAddAccountUseCase, IHttpRequest } from './protocols'

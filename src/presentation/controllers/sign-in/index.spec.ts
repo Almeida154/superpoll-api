@@ -1,17 +1,16 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { IHttpRequest } from '@/presentation/protocols'
+import { IHttpRequest, IValidation } from '@/presentation/protocols'
 
 import {
   badRequest,
   internalException,
   ok,
   unauthorized,
-} from '@/presentation/helpers/http/http'
+} from '@/presentation/helpers/http'
 
 import { NoProvidedParamError } from '@/presentation/errors'
 import { IAuthenticationUseCase } from '@/domain/usecases'
-import { IValidation } from '@/presentation/helpers/validators'
 
 import { SignInController } from '.'
 
