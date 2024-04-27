@@ -5,7 +5,12 @@ import {
   IValidation,
 } from '../../authentication/sign-up/protocols'
 
-import { badRequest, internalException } from '@/presentation/helpers/http'
+import {
+  badRequest,
+  internalException,
+  noContent,
+} from '@/presentation/helpers/http'
+
 import { IAddSurveyUseCase } from '@/domain/usecases/survey'
 
 import { AddSurveyController } from '.'
@@ -93,5 +98,12 @@ describe('AddSurveyController', () => {
     const httpRequest = makeFakeRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(internalException(new Error()))
+  })
+
+  it('should return 204 on success', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(noContent())
   })
 })
