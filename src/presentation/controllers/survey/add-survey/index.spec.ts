@@ -5,7 +5,7 @@ import {
   IValidation,
 } from '../../authentication/sign-up/protocols'
 
-import { badRequest } from '@/presentation/helpers/http'
+import { badRequest, internalException } from '@/presentation/helpers/http'
 import { IAddSurveyUseCase } from '@/domain/usecases/survey'
 
 import { AddSurveyController } from '.'
@@ -83,5 +83,15 @@ describe('AddSurveyController', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(executeSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  it('should return 500 if AddSurveyUseCase throws', async () => {
+    const { sut, addSurveyUseCaseStub } = makeSut()
+    vi.spyOn(addSurveyUseCaseStub, 'execute').mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error())),
+    )
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(internalException(new Error()))
   })
 })
