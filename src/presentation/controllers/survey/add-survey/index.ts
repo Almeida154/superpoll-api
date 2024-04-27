@@ -1,5 +1,9 @@
 import { IAddSurveyUseCase } from '@/domain/usecases/survey'
-import { badRequest, internalException } from '@/presentation/helpers/http'
+import {
+  badRequest,
+  internalException,
+  noContent,
+} from '@/presentation/helpers/http'
 import {
   IController,
   IHttpRequest,
@@ -20,6 +24,8 @@ export class AddSurveyController implements IController {
 
       const { question, answers } = httpRequest.body
       await this.addSurveyUseCase.execute({ question, answers })
+
+      return noContent()
     } catch (error) {
       return internalException(error)
     }
