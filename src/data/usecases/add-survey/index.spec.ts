@@ -42,4 +42,13 @@ describe('AddSurveyUseCase', () => {
     await sut.execute(survey)
     expect(addSpy).toHaveBeenCalledWith(survey)
   })
+
+  it('should throw if AddSurveyRepository throws', async () => {
+    const { sut, addSurveyRepositoryStub } = makeSut()
+    vi.spyOn(addSurveyRepositoryStub, 'add').mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error())),
+    )
+    const promise = sut.execute(makeFakeSurvey())
+    expect(promise).rejects.toThrow()
+  })
 })
