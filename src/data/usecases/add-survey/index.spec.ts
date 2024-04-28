@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import { IAddSurveyModel } from '@/domain/usecases/survey'
+import { IAddSurveyRepository } from '@/data/protocols'
 
 import { AddSurveyUseCase } from '.'
-import { IAddSurveyRepository } from '@/data/protocols'
 
 const makeFakeSurvey = (): IAddSurveyModel => ({
   answers: [{ answer: 'any_answer', image: 'any_image' }],
