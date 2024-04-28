@@ -1,6 +1,6 @@
 import { describe, expect, it, vitest } from 'vitest'
 
-import { IEmailValidator } from '@/presentation/protocols'
+import { IEmailValidator } from '@/validation/protocols'
 import { InvalidParamError } from '@/presentation/errors'
 
 import { EmailValidation } from '.'
