@@ -1,3 +1,4 @@
+import { ILoadAccountByTokenUseCase } from '@/domain/usecases'
 import { AccessDeniedError } from '@/presentation/errors'
 import { forbidden } from '@/presentation/helpers/http'
 import {
@@ -7,10 +8,13 @@ import {
 } from '@/presentation/protocols'
 
 export class AuthenticationMiddleware implements IMiddleware {
-  async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
-    if (!httpRequest.headers?.['x-access-token'])
-      return forbidden(new AccessDeniedError())
+  constructor(
+    private readonly loadAccountByTokenUseCase: ILoadAccountByTokenUseCase,
+  ) {}
 
-    return null
+  async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
+    const accessToken = httpRequest.headers?.['x-access-token']
+    if (!accessToken) return forbidden(new AccessDeniedError())
+    await this.loadAccountByTokenUseCase.execute(accessToken)
   }
 }
