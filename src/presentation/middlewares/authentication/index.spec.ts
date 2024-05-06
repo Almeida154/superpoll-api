@@ -51,10 +51,19 @@ describe('AuthenticationMiddleware', () => {
     expect(response).toEqual(forbidden(new AccessDeniedError()))
   })
 
-  it('should call LoadAccountByToken with correct accessToken', async () => {
+  it('should call LoadAccountByTokenUseCase with correct accessToken', async () => {
     const { sut, loadAccountByTokenUseCaseStub } = makeSut()
     const loadSpy = vi.spyOn(loadAccountByTokenUseCaseStub, 'execute')
     await sut.handle(makeFakeRequest())
     expect(loadSpy).toHaveBeenCalledWith('any_token')
+  })
+
+  it('should return 403 if LoadAccountByTokenUseCase returns null', async () => {
+    const { sut, loadAccountByTokenUseCaseStub } = makeSut()
+    vi.spyOn(loadAccountByTokenUseCaseStub, 'execute').mockReturnValueOnce(
+      new Promise((resolve) => resolve(null)),
+    )
+    const response = await sut.handle({})
+    expect(response).toEqual(forbidden(new AccessDeniedError()))
   })
 })

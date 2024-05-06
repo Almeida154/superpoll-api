@@ -16,5 +16,6 @@ export class AuthenticationMiddleware implements IMiddleware {
     const accessToken = httpRequest.headers?.['x-access-token']
     if (!accessToken) return forbidden(new AccessDeniedError())
     await this.loadAccountByTokenUseCase.execute(accessToken)
+    return forbidden(new AccessDeniedError())
   }
 }
