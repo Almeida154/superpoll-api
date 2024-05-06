@@ -34,9 +34,9 @@ interface ISut {
   loadAccountByTokenUseCaseStub: ILoadAccountByTokenUseCase
 }
 
-const makeSut = (): ISut => {
+const makeSut = (role?: string): ISut => {
   const loadAccountByTokenUseCaseStub = makeLoadAccountByTokenUseCase()
-  const sut = new AuthenticationMiddleware(loadAccountByTokenUseCaseStub)
+  const sut = new AuthenticationMiddleware(loadAccountByTokenUseCaseStub, role)
 
   return {
     sut,
@@ -52,10 +52,11 @@ describe('AuthenticationMiddleware', () => {
   })
 
   it('should call LoadAccountByTokenUseCase with correct accessToken', async () => {
-    const { sut, loadAccountByTokenUseCaseStub } = makeSut()
+    const role = 'any_role'
+    const { sut, loadAccountByTokenUseCaseStub } = makeSut(role)
     const loadSpy = vi.spyOn(loadAccountByTokenUseCaseStub, 'execute')
     await sut.handle(makeFakeRequest())
-    expect(loadSpy).toHaveBeenCalledWith('any_token')
+    expect(loadSpy).toHaveBeenCalledWith('any_token', role)
   })
 
   it('should return 403 if LoadAccountByTokenUseCase returns null', async () => {
