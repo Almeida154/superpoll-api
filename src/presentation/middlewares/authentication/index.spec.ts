@@ -3,10 +3,10 @@ import { describe, expect, it, vi } from 'vitest'
 import { AccessDeniedError } from '@/presentation/errors'
 import { forbidden, internalException, ok } from '@/presentation/helpers/http'
 import { ILoadAccountByTokenUseCase } from '@/domain/usecases'
-
-import { AuthenticationMiddleware } from '.'
 import { AccountModel } from '@/domain/models'
 import { IHttpRequest } from '@/presentation/protocols'
+
+import { AuthenticationMiddleware } from '.'
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'any_id',
