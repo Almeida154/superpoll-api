@@ -1,6 +1,6 @@
 import { ILoadAccountByTokenUseCase } from '@/domain/usecases'
 import { AccessDeniedError } from '@/presentation/errors'
-import { forbidden, ok } from '@/presentation/helpers/http'
+import { forbidden, internalException, ok } from '@/presentation/helpers/http'
 import {
   IHttpRequest,
   IHttpResponse,
@@ -13,10 +13,14 @@ export class AuthenticationMiddleware implements IMiddleware {
   ) {}
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
-    const accessToken = httpRequest.headers?.['x-access-token']
-    if (!accessToken) return forbidden(new AccessDeniedError())
-    const account = await this.loadAccountByTokenUseCase.execute(accessToken)
-    if (account) return ok({ accountId: account.id })
-    return forbidden(new AccessDeniedError())
+    try {
+      const accessToken = httpRequest.headers?.['x-access-token']
+      if (!accessToken) return forbidden(new AccessDeniedError())
+      const account = await this.loadAccountByTokenUseCase.execute(accessToken)
+      if (account) return ok({ accountId: account.id })
+      return forbidden(new AccessDeniedError())
+    } catch (error) {
+      return internalException(error)
+    }
   }
 }
