@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { AccessDeniedError } from '@/presentation/errors'
-import { forbidden, ok } from '@/presentation/helpers/http'
+import { forbidden, internalException, ok } from '@/presentation/helpers/http'
 import { ILoadAccountByTokenUseCase } from '@/domain/usecases'
 
 import { AuthenticationMiddleware } from '.'
@@ -71,5 +71,14 @@ describe('AuthenticationMiddleware', () => {
     const { sut } = makeSut()
     const response = await sut.handle(makeFakeRequest())
     expect(response).toEqual(ok({ accountId: 'any_id' }))
+  })
+
+  it('should return 500 if LoadAccountByTokenUseCase throws', async () => {
+    const { sut, loadAccountByTokenUseCaseStub } = makeSut()
+    vi.spyOn(loadAccountByTokenUseCaseStub, 'execute').mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error())),
+    )
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(internalException(new Error()))
   })
 })
