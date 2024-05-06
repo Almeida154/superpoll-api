@@ -6,12 +6,17 @@ import { ILoadAccountByTokenUseCase } from '@/domain/usecases'
 
 import { AuthenticationMiddleware } from '.'
 import { AccountModel } from '@/domain/models'
+import { IHttpRequest } from '@/presentation/protocols'
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'any_id',
   name: 'any_name',
   email: 'any@email.com',
   password: 'hashed_password',
+})
+
+const makeFakeRequest = (): IHttpRequest => ({
+  headers: { 'x-access-token': 'any_token' },
 })
 
 const makeLoadAccountByTokenUseCase = (): ILoadAccountByTokenUseCase => {
@@ -49,9 +54,7 @@ describe('AuthenticationMiddleware', () => {
   it('should call LoadAccountByToken with correct accessToken', async () => {
     const { sut, loadAccountByTokenUseCaseStub } = makeSut()
     const loadSpy = vi.spyOn(loadAccountByTokenUseCaseStub, 'execute')
-    await sut.handle({
-      headers: { 'x-access-token': 'any_token' },
-    })
+    await sut.handle(makeFakeRequest())
     expect(loadSpy).toHaveBeenCalledWith('any_token')
   })
 })
