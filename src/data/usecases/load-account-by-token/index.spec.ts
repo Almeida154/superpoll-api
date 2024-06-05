@@ -28,7 +28,7 @@ const makeSut = (): ISut => {
 }
 
 describe('LoadAccountByTokenUseCase', () => {
-  it('should call Decrypter with correct values', async () => {
+  it('should call Decrypter with correct value', async () => {
     const { sut, decrypterStub } = makeSut()
     const decryptSpy = vi.spyOn(decrypterStub, 'decrypt')
     await sut.execute('any_token')
