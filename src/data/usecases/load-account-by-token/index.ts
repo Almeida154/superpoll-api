@@ -12,6 +12,10 @@ export class LoadAccountByTokenUseCase implements ILoadAccountByTokenUseCase {
   async execute(accessToken: string, role?: string): Promise<AccountModel> {
     const token = await this.decrypter.decrypt(accessToken)
     if (!token) return null
-    await this.loadAccountByTokenRepository.loadByToken(accessToken, role)
+    const account = await this.loadAccountByTokenRepository.loadByToken(
+      accessToken,
+      role,
+    )
+    return account
   }
 }

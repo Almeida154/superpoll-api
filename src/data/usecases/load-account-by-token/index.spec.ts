@@ -80,4 +80,16 @@ describe('LoadAccountByTokenUseCase', () => {
     await sut.execute('any_token', 'any_role')
     expect(loadByTokenSpy).toHaveBeenCalledWith('any_token', 'any_role')
   })
+
+  it('should return null if LoadAccountByTokenRepository returns null', async () => {
+    const { sut, loadAccountByTokenRepositoryStub } = makeSut()
+    vi.spyOn(
+      loadAccountByTokenRepositoryStub,
+      'loadByToken',
+    ).mockImplementationOnce(() => {
+      return new Promise((resolve) => resolve(null))
+    })
+    const account = await sut.execute('any_token', 'any_role')
+    expect(account).toBeNull()
+  })
 })
