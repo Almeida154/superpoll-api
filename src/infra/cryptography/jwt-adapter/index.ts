@@ -1,11 +1,17 @@
 import jwt from 'jsonwebtoken'
 
-import { IEncrypter } from '@/data/protocols'
+import { IEncrypter, IDecrypter } from '@/data/protocols'
 
-export class JwtAdapter implements IEncrypter {
+export class JwtAdapter implements IEncrypter, IDecrypter {
   constructor(private readonly secret: string) {}
 
-  encrypt(id: string): Promise<string> {
-    return new Promise((resolve) => resolve(jwt.sign({ id }, this.secret)))
+  decrypt(): Promise<string> {
+    throw new Error('Method not implemented.')
+  }
+
+  encrypt(value: string): Promise<string> {
+    return new Promise((resolve) =>
+      resolve(jwt.sign({ id: value }, this.secret)),
+    )
   }
 }
