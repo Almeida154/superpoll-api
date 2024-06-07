@@ -8,6 +8,9 @@ vi.mock('jsonwebtoken', () => ({
     async sign(): Promise<string> {
       return new Promise((resolve) => resolve('any_token'))
     },
+    async verify(): Promise<string> {
+      return new Promise((resolve) => resolve('any_value'))
+    },
   },
 }))
 
@@ -37,6 +40,15 @@ describe('JwtAdapter', () => {
       })
       const accessTokenPromise = sut.encrypt('any_id')
       await expect(accessTokenPromise).rejects.toThrow()
+    })
+  })
+
+  describe('verify()', () => {
+    it('should call verify with correct values', async () => {
+      const sut = makeSut()
+      const verifySpy = vi.spyOn(jwt, 'verify')
+      await sut.decrypt('any_token')
+      expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret')
     })
   })
 })
