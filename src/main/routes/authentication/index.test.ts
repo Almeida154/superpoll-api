@@ -16,7 +16,7 @@ const makeFakeAccount = () => ({
 
 describe('Authentication routes', () => {
   beforeAll(async () => {
-    await new Promise<void>((resolve) => setTimeout(resolve, 100))
+    await new Promise<void>((resolve) => setTimeout(resolve, 200))
     await MongoClient.connect({ useMemory: true })
   })
 
