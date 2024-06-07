@@ -5,14 +5,13 @@ import { IEncrypter, IDecrypter } from '@/data/protocols'
 export class JwtAdapter implements IEncrypter, IDecrypter {
   constructor(private readonly secret: string) {}
 
-  decrypt(value: string): Promise<string> {
-    jwt.verify(value, this.secret)
-    return null
+  async decrypt(token: string): Promise<string> {
+    const decrypted = jwt.verify(token, this.secret)
+    return decrypted as string
   }
 
-  encrypt(value: string): Promise<string> {
-    return new Promise((resolve) =>
-      resolve(jwt.sign({ id: value }, this.secret)),
-    )
+  async encrypt(value: string): Promise<string> {
+    const encrypted = jwt.sign({ id: value }, this.secret)
+    return encrypted
   }
 }
