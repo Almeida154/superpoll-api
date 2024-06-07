@@ -5,8 +5,9 @@ import { IEncrypter, IDecrypter } from '@/data/protocols'
 export class JwtAdapter implements IEncrypter, IDecrypter {
   constructor(private readonly secret: string) {}
 
-  decrypt(): Promise<string> {
-    throw new Error('Method not implemented.')
+  decrypt(value: string): Promise<string> {
+    jwt.verify(value, this.secret)
+    return null
   }
 
   encrypt(value: string): Promise<string> {
