@@ -1,4 +1,4 @@
-import env from '../../config/env'
+import env from '../../../config/env'
 
 import { AuthenticationUseCase } from '@/data/usecases'
 
@@ -12,8 +12,8 @@ import { BcryptAdapter, JwtAdapter } from '@/infra/cryptography'
 import { IController } from '@/presentation/protocols'
 import { SignInController } from '@/presentation/controllers'
 
-import { ControllerLogDecorator } from '../../decorators'
-import { makeSignInValidation } from '../validations'
+import { ControllerLogDecorator } from '../../../decorators'
+import { makeSignInValidation } from '../../validations'
 
 export const makeSignInController = (): IController => {
   const accountRepository = new AccountMongoRepository()

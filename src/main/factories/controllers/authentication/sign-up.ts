@@ -11,8 +11,8 @@ import { IController } from '@/presentation/protocols'
 import { JwtAdapter } from '@/infra/cryptography'
 import env from '@/main/config/env'
 
-import { ControllerLogDecorator } from '../../decorators'
-import { makeSignUpValidation } from '../validations'
+import { ControllerLogDecorator } from '../../../decorators'
+import { makeSignUpValidation } from '../../validations'
 
 export const makeSignUpController = (): IController => {
   const encrypter = new BcryptAdapter(12)

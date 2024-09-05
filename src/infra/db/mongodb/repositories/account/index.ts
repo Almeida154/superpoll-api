@@ -4,6 +4,7 @@ import { MongoClient } from '@/infra/db/mongodb/helpers/mongo-client'
 import {
   IAddAccountRepository,
   ILoadAccountByEmailRepository,
+  ILoadAccountByTokenRepository,
   IUpdateAccessTokenRepository,
 } from '@/data/protocols'
 
@@ -14,7 +15,8 @@ export class AccountMongoRepository
   implements
     IAddAccountRepository,
     ILoadAccountByEmailRepository,
-    IUpdateAccessTokenRepository
+    IUpdateAccessTokenRepository,
+    ILoadAccountByTokenRepository
 {
   async add(account: IAddAccountModel): Promise<AccountModel> {
     const collection = await MongoClient.getCollection<AccountModel>('accounts')
@@ -35,5 +37,11 @@ export class AccountMongoRepository
       { _id: new ObjectId(id) },
       { $set: { accessToken: token } },
     )
+  }
+
+  async loadByToken(token: string, role?: string): Promise<AccountModel> {
+    const collection = await MongoClient.getCollection<AccountModel>('accounts')
+    const account = await collection.findOne({ accessToken: token, role })
+    return MongoClient.map<AccountModel>(account)
   }
 }
