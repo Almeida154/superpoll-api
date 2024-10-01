@@ -3,11 +3,14 @@ import request from 'supertest'
 import { Collection } from 'mongodb'
 
 import { MongoClient } from '@/infra/db/mongodb/helpers/mongo-client'
-import { SurveyModel } from '@/domain/models'
+import { AccountModel, SurveyModel } from '@/domain/models'
 
 import app from '@/main/config/app'
+import { sign } from 'jsonwebtoken'
+import env from '@/main/config/env'
 
-let collection: Collection<Omit<SurveyModel, 'id'>>
+let surveyCollection: Collection<Omit<SurveyModel, 'id'>>
+let accountCollection: Collection<Omit<AccountModel, 'id'>>
 
 describe('Survey routes', () => {
   beforeAll(async () => {
@@ -20,8 +23,11 @@ describe('Survey routes', () => {
   })
 
   beforeEach(async () => {
-    collection = await MongoClient.getCollection('surveys')
-    await collection.deleteMany()
+    surveyCollection = await MongoClient.getCollection('surveys')
+    accountCollection = await MongoClient.getCollection('accounts')
+
+    await surveyCollection.deleteMany()
+    await accountCollection.deleteMany()
   })
 
   describe('POST /add-survey', () => {
@@ -41,6 +47,39 @@ describe('Survey routes', () => {
           ],
         })
         .expect(403)
+    })
+
+    it('should return 204 on add survey with valid access token', async () => {
+      const account = await accountCollection.insertOne({
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        password: '123456',
+        role: 'admin',
+      })
+
+      const accessToken = sign({ id: account.insertedId }, env.jwtSecret)
+
+      await accountCollection.updateOne(
+        { _id: account.insertedId },
+        { $set: { accessToken } },
+      )
+
+      await request(app)
+        .post('/api/add-survey')
+        .set('x-access-token', accessToken)
+        .send({
+          question: 'Question',
+          answers: [
+            {
+              answer: 'Answer 1',
+              image: 'http://image-name.com',
+            },
+            {
+              answer: 'Answer 2',
+            },
+          ],
+        })
+        .expect(204)
     })
   })
 })
