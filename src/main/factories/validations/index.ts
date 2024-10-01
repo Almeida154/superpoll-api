@@ -1,3 +1,3 @@
-export * from './sign-up'
-export * from './sign-in'
-export * from './add-survey'
+export * from './authentication/sign-up'
+export * from './authentication/sign-in'
+export * from './survey/add-survey'
