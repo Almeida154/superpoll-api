@@ -14,7 +14,7 @@ let accountCollection: Collection<Omit<AccountModel, 'id'>>
 
 describe('Survey routes', () => {
   beforeAll(async () => {
-    await new Promise<void>((resolve) => setTimeout(resolve, 100))
+    await new Promise<void>((resolve) => setTimeout(resolve, 500))
     await MongoClient.connect({ useMemory: true })
   })
 
