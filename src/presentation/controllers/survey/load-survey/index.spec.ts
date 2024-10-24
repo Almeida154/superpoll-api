@@ -38,7 +38,12 @@ const makeLoadSurveysUseCaseStub = (): ILoadSurveysUseCase => {
   return new LoadSurveysUseCaseStub()
 }
 
-const makeSut = () => {
+interface ISut {
+  sut: LoadSurveysController
+  loadSurveysUseCaseStub: ILoadSurveysUseCase
+}
+
+const makeSut = (): ISut => {
   const loadSurveysUseCaseStub = makeLoadSurveysUseCaseStub()
   const sut = new LoadSurveysController(loadSurveysUseCaseStub)
   return { sut, loadSurveysUseCaseStub }
