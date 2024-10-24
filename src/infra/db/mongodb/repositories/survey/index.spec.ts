@@ -12,6 +12,7 @@ const makeFakeSurvey = (): IAddSurveyModel => ({
     { answer: 'another_answer' },
   ],
   question: 'any_question',
+  date: new Date(),
 })
 
 const makeSut = () => {

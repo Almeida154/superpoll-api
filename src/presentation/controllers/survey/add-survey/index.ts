@@ -23,7 +23,11 @@ export class AddSurveyController implements IController {
       if (error) return badRequest(error)
 
       const { question, answers } = httpRequest.body
-      await this.addSurveyUseCase.execute({ question, answers })
+      await this.addSurveyUseCase.execute({
+        question,
+        answers,
+        date: new Date(),
+      })
 
       return noContent()
     } catch (error) {

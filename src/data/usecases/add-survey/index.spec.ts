@@ -1,4 +1,6 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import MockDate from 'mockdate'
+
 import { IAddSurveyModel } from '@/domain/usecases/survey'
 import { IAddSurveyRepository } from '@/data/protocols'
 
@@ -7,6 +9,7 @@ import { AddSurveyUseCase } from '.'
 const makeFakeSurvey = (): IAddSurveyModel => ({
   answers: [{ answer: 'any_answer', image: 'any_image' }],
   question: 'any_question',
+  date: new Date(),
 })
 
 const makeAddSurveyRepository = (): IAddSurveyRepository => {
@@ -35,6 +38,14 @@ const makeSut = (): ISut => {
 }
 
 describe('AddSurveyUseCase', () => {
+  beforeAll(() => {
+    MockDate.set(new Date())
+  })
+
+  afterAll(() => {
+    MockDate.reset()
+  })
+
   it('should call AddSurveyRepository with correct values', async () => {
     const { sut, addSurveyRepositoryStub } = makeSut()
     const addSpy = vi.spyOn(addSurveyRepositoryStub, 'add')

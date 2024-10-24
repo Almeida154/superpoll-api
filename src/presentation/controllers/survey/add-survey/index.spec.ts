@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import MockDate from 'mockdate'
 
 import {
   IHttpRequest,
@@ -24,6 +25,7 @@ const makeFakeRequest = (): IHttpRequest => ({
         answer: 'any_answer',
       },
     ],
+    date: new Date(),
   },
 })
 
@@ -66,6 +68,14 @@ const makeSut = (): ISut => {
 }
 
 describe('AddSurveyController', () => {
+  beforeAll(() => {
+    MockDate.set(new Date())
+  })
+
+  afterAll(() => {
+    MockDate.reset()
+  })
+
   it('should call Validation with correct values', async () => {
     const { sut, validationStub } = makeSut()
     const validateSpy = vi.spyOn(validationStub, 'validate')
